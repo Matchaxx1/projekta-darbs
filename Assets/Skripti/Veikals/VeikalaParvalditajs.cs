@@ -8,6 +8,7 @@ public class VeikalaParvalditajs : MonoBehaviour
     [SerializeField] private PrecesVieta[] precesVieta;
     [SerializeField] private GameObject veikalaCanvas;
     [SerializeField] private SpeletajaProgress speletajaProgress;
+    [SerializeField] private AkvarijaParvaldnieks akvarijaParvaldnieks;
 
     private void Start()
     {
@@ -35,6 +36,15 @@ public class VeikalaParvalditajs : MonoBehaviour
             speletajaProgress.monetas -= cena;
             speletajaProgress.monetuSkaitsTMP.text = "Monētas: " + speletajaProgress.monetas.ToString();
 
+            // Ielikt nopirkto zivi akvārijā
+            if (akvarijaParvaldnieks != null)
+            {
+                akvarijaParvaldnieks.IeliktZivi(zivsSO);
+            }
+            else
+            {
+                Debug.LogWarning("VeikalaParvalditajs: AkvarijaParvaldnieks nav piesaistīts!");
+            }
         }
     }
 }
