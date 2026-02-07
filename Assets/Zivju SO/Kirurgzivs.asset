@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30da3dd30e04731459ca4cebea0f9379, type: 3}
-  m_Name: Pike
+  m_Name: Kirurgzivs
   m_EditorClassIdentifier: 
-  id: 2
-  fishName: Pike
-  fishPrice: 25
-  fishSprite: {fileID: 0}
+  id: 1
+  zivsNosaukums: "\u0136irurgzivs"
+  zivsCena: 10
+  zivsSpraits: {fileID: 21300000, guid: 8bcbbfc0be7a73445816ae831fa4692b, type: 3}

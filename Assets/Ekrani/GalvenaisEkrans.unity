@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 140126580}
   - component: {fileID: 140126579}
   m_Layer: 5
-  m_Name: ItemPanel
+  m_Name: PrecuPanelis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 180006804}
   - component: {fileID: 180006803}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: UI_Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -342,7 +342,7 @@ GameObject:
   - component: {fileID: 180293932}
   - component: {fileID: 180293931}
   m_Layer: 0
-  m_Name: PlayerProgress
+  m_Name: SpeletajaProgress
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -360,13 +360,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782532c8810576c4dabae4d0ef47a4d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepsPerCoin: 100
-  stepCountTMP: {fileID: 259575896}
-  coinsCountTMP: {fileID: 1356937238}
-  addStepsButton: {fileID: 597888062}
-  addMoreStepsButton: {fileID: 1488097130}
-  currentSteps: 0
-  currentCoins: 0
+  soliPrieksMonetas: 100
+  soluSkaitsTMP: {fileID: 259575896}
+  monetuSkaitsTMP: {fileID: 1356937238}
+  pievienotSolusPoga: {fileID: 597888062}
+  pievienotVairakSolusPoga: {fileID: 1488097130}
+  soli: 0
+  monetas: 0
 --- !u!4 &180293932
 Transform:
   m_ObjectHideFlags: 0
@@ -395,6 +395,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 140126578}
     m_Modifications:
+    - target: {fileID: 54466030551910071, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: veikalaParvalditajs
+      value: 
+      objectReference: {fileID: 1533392847}
+    - target: {fileID: 470259803492947248, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: Cena
+      objectReference: {fileID: 0}
     - target: {fileID: 1149189026416138828, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -475,13 +483,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2998567826859165241, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsSpraits
+      objectReference: {fileID: 0}
     - target: {fileID: 3846073375423170136, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Name
-      value: ShopSlot (3)
+      value: PrecesVieta (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5654698959970843020, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.6920013
+      objectReference: {fileID: 0}
+    - target: {fileID: 6170507799618458555, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: CenaTeksts
       objectReference: {fileID: 0}
     - target: {fileID: 8459760960135183541, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -25.495972
+      objectReference: {fileID: 0}
+    - target: {fileID: 8584831001910860861, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsNosaukums
       objectReference: {fileID: 0}
     - target: {fileID: 8969875643207185369, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: shopSlots.Array.size
@@ -533,7 +557,7 @@ GameObject:
   - component: {fileID: 259575897}
   - component: {fileID: 259575896}
   m_Layer: 5
-  m_Name: stepCount
+  m_Name: SoluSkaits
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -555,8 +579,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -173.2, y: 518.92}
-  m_SizeDelta: {x: 394.81, y: 99.38}
+  m_AnchoredPosition: {x: 14.697, y: 518.92}
+  m_SizeDelta: {x: 770.61, y: 99.385}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &259575896
 MonoBehaviour:
@@ -578,7 +602,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Steps: 0'
+  m_text: 'soli: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -658,6 +682,152 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 259575894}
   m_CullTransparentMesh: 1
+--- !u!1 &277822588
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 277822589}
+  - component: {fileID: 277822593}
+  - component: {fileID: 277822592}
+  - component: {fileID: 277822591}
+  - component: {fileID: 277822590}
+  m_Layer: 5
+  m_Name: AizvertVeikaluPoga
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &277822589
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277822588}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2147140962}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0.000061035156}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &277822590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277822588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 277822592}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 277822591}
+        m_TargetAssemblyTypeName: VeikalaUIParvaldnieks, Assembly-CSharp
+        m_MethodName: AizvertVeikalu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &277822591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277822588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7679f0bf30967f8429a614d5ea9f9558, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  veikalaUI: {fileID: 1533392841}
+--- !u!114 &277822592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277822588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.9811321, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &277822593
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277822588}
+  m_CullTransparentMesh: 1
 --- !u!1001 &471761134
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -668,7 +838,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4479533200337508748, guid: 532220a25d21684428812859e059e486, type: 3}
       propertyPath: m_Name
-      value: TextUpgradesButton
+      value: UpgradesPogaTeksts
       objectReference: {fileID: 0}
     - target: {fileID: 5855463942442315629, guid: 532220a25d21684428812859e059e486, type: 3}
       propertyPath: m_Pivot.x
@@ -752,7 +922,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7703755475114427672, guid: 532220a25d21684428812859e059e486, type: 3}
       propertyPath: m_Name
-      value: UpgradesButton
+      value: UpgradePoga
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -777,7 +947,7 @@ GameObject:
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: GalvenaKamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -913,7 +1083,7 @@ GameObject:
   - component: {fileID: 544030791}
   - component: {fileID: 544030790}
   m_Layer: 5
-  m_Name: addmorestepsText
+  m_Name: PievienotVairakSolusText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -958,7 +1128,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: add steps + 1000
+  m_text: pievienot solus + 1000
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1051,7 +1221,7 @@ GameObject:
   - component: {fileID: 597888063}
   - component: {fileID: 597888062}
   m_Layer: 5
-  m_Name: addStepsButton
+  m_Name: PievienotSolusPoga
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1167,6 +1337,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 140126578}
     m_Modifications:
+    - target: {fileID: 54466030551910071, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: veikalaParvalditajs
+      value: 
+      objectReference: {fileID: 1533392847}
+    - target: {fileID: 470259803492947248, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: Cena
+      objectReference: {fileID: 0}
     - target: {fileID: 1149189026416138828, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1247,13 +1425,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2998567826859165241, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsSpraits
+      objectReference: {fileID: 0}
     - target: {fileID: 3846073375423170136, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Name
-      value: ShopSlot (5)
+      value: PrecesVieta (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5654698959970843020, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.6920013
+      objectReference: {fileID: 0}
+    - target: {fileID: 6170507799618458555, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: CenaTeksts
       objectReference: {fileID: 0}
     - target: {fileID: 8459760960135183541, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -25.495972
+      objectReference: {fileID: 0}
+    - target: {fileID: 8584831001910860861, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsNosaukums
       objectReference: {fileID: 0}
     - target: {fileID: 8969875643207185369, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: shopSlots.Array.size
@@ -1388,6 +1582,107 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f299072d28344924a8233e0dacd291d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &800687271
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 800687275}
+  - component: {fileID: 800687274}
+  - component: {fileID: 800687273}
+  - component: {fileID: 800687272}
+  m_Layer: 5
+  m_Name: AkvarijaCanvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &800687272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800687271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &800687273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800687271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!223 &800687274
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800687271}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 1
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &800687275
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800687271}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1 &822453505
 GameObject:
   m_ObjectHideFlags: 0
@@ -1480,7 +1775,7 @@ GameObject:
   - component: {fileID: 1063668120}
   - component: {fileID: 1063668119}
   m_Layer: 5
-  m_Name: BottomPanel
+  m_Name: ApaksejaisPanelis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1545,7 +1840,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1592,7 +1887,7 @@ GameObject:
   - component: {fileID: 1317778811}
   - component: {fileID: 1317778810}
   m_Layer: 5
-  m_Name: addstepsText
+  m_Name: PievienotSolusText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1637,7 +1932,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: add steps + 100
+  m_text: pievienot solus + 100
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1729,7 +2024,7 @@ GameObject:
   - component: {fileID: 1356937239}
   - component: {fileID: 1356937238}
   m_Layer: 5
-  m_Name: coinsCount
+  m_Name: MonetuSkaits
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1751,8 +2046,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -185.3, y: 632}
-  m_SizeDelta: {x: 370.61, y: 126.77}
+  m_AnchoredPosition: {x: 14.694, y: 624.49}
+  m_SizeDelta: {x: 770.61, y: 111.73}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1356937238
 MonoBehaviour:
@@ -1774,7 +2069,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Coins: 0
+  m_text: 'soli: 0
 
 '
   m_isRightToLeft: 0
@@ -1869,7 +2164,7 @@ GameObject:
   - component: {fileID: 1488097131}
   - component: {fileID: 1488097130}
   m_Layer: 5
-  m_Name: addMoreStepsButton
+  m_Name: PievienotVairakSolusPoga
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1992,7 +2287,7 @@ GameObject:
   - component: {fileID: 1533392846}
   - component: {fileID: 1533392847}
   m_Layer: 5
-  m_Name: ShopCanvas
+  m_Name: VeikalaCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2091,7 +2386,7 @@ CanvasGroup:
   m_Enabled: 1
   m_Alpha: 0
   m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!114 &1533392847
 MonoBehaviour:
@@ -2105,19 +2400,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ecef577b8bdea4419f91583c904b2f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shopItems:
-  - SOFish: {fileID: 11400000, guid: 9395576716f24ac4bb60481674309bbf, type: 2}
-    price: 0
-  - SOFish: {fileID: 11400000, guid: 7f8aba0d94c72b74b8166cea140c59d9, type: 2}
-    price: 0
-  shopSlots:
+  precuSaraksts:
+  - ZivsSO: {fileID: 11400000, guid: 834799e5b7528664eb9d036badaf7d06, type: 2}
+    cena: 5
+  - ZivsSO: {fileID: 11400000, guid: 14e10050db69a6c4382dfecf765d5936, type: 2}
+    cena: 10
+  precesVieta:
   - {fileID: 5190867217066962883}
   - {fileID: 1806897967}
   - {fileID: 1985678122}
   - {fileID: 659228999}
   - {fileID: 2020347430}
   - {fileID: 1183781068}
-  ShopCanvas: {fileID: 1533392841}
+  veikalaCanvas: {fileID: 0}
+  speletajaProgress: {fileID: 180293931}
 --- !u!1001 &1622343551
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2126,6 +2422,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 140126578}
     m_Modifications:
+    - target: {fileID: 54466030551910071, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: veikalaParvalditajs
+      value: 
+      objectReference: {fileID: 1533392847}
+    - target: {fileID: 470259803492947248, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: Cena
+      objectReference: {fileID: 0}
     - target: {fileID: 1149189026416138828, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2206,13 +2510,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2998567826859165241, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsSpraits
+      objectReference: {fileID: 0}
     - target: {fileID: 3846073375423170136, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Name
-      value: ShopSlot (4)
+      value: PrecesVieta (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5654698959970843020, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.6920013
+      objectReference: {fileID: 0}
+    - target: {fileID: 6170507799618458555, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: CenaTeksts
       objectReference: {fileID: 0}
     - target: {fileID: 8459760960135183541, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -25.495972
+      objectReference: {fileID: 0}
+    - target: {fileID: 8584831001910860861, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsNosaukums
       objectReference: {fileID: 0}
     - target: {fileID: 8969875643207185369, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: shopSlots.Array.size
@@ -2260,6 +2580,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 140126578}
     m_Modifications:
+    - target: {fileID: 54466030551910071, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: veikalaParvalditajs
+      value: 
+      objectReference: {fileID: 1533392847}
+    - target: {fileID: 470259803492947248, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: Cena
+      objectReference: {fileID: 0}
     - target: {fileID: 1149189026416138828, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2340,13 +2668,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2998567826859165241, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsSpraits
+      objectReference: {fileID: 0}
     - target: {fileID: 3846073375423170136, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Name
-      value: ShopSlot (1)
+      value: PrecesVieta (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5654698959970843020, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.6920013
+      objectReference: {fileID: 0}
+    - target: {fileID: 6170507799618458555, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: CenaTeksts
       objectReference: {fileID: 0}
     - target: {fileID: 8459760960135183541, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -25.495972
+      objectReference: {fileID: 0}
+    - target: {fileID: 8584831001910860861, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsNosaukums
       objectReference: {fileID: 0}
     - target: {fileID: 8969875643207185369, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: shopSlots.Array.size
@@ -2405,6 +2749,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 140126578}
     m_Modifications:
+    - target: {fileID: 54466030551910071, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: veikalaParvalditajs
+      value: 
+      objectReference: {fileID: 1533392847}
+    - target: {fileID: 470259803492947248, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: Cena
+      objectReference: {fileID: 0}
     - target: {fileID: 1149189026416138828, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2485,13 +2837,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2998567826859165241, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsSpraits
+      objectReference: {fileID: 0}
     - target: {fileID: 3846073375423170136, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Name
-      value: ShopSlot (2)
+      value: PrecesVieta (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5654698959970843020, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.6920013
+      objectReference: {fileID: 0}
+    - target: {fileID: 6170507799618458555, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: CenaTeksts
       objectReference: {fileID: 0}
     - target: {fileID: 8459760960135183541, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -25.495972
+      objectReference: {fileID: 0}
+    - target: {fileID: 8584831001910860861, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsNosaukums
       objectReference: {fileID: 0}
     - target: {fileID: 8969875643207185369, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: shopSlots.Array.size
@@ -2565,8 +2933,9 @@ GameObject:
   - component: {fileID: 2054855520}
   - component: {fileID: 2054855519}
   - component: {fileID: 2054855518}
+  - component: {fileID: 2054855521}
   m_Layer: 5
-  m_Name: shopButton
+  m_Name: VeikalaPoga
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2588,7 +2957,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -477}
+  m_AnchoredPosition: {x: 0, y: -591}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2054855518
@@ -2634,7 +3003,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2054855519}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2054855521}
+        m_TargetAssemblyTypeName: VeikalaUIParvaldnieks, Assembly-CSharp
+        m_MethodName: AtvertVeikalu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2054855519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2673,6 +3054,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2054855516}
   m_CullTransparentMesh: 1
+--- !u!114 &2054855521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2054855516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7679f0bf30967f8429a614d5ea9f9558, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  veikalaUI: {fileID: 1533392841}
 --- !u!1 &2147140961
 GameObject:
   m_ObjectHideFlags: 0
@@ -2685,7 +3079,7 @@ GameObject:
   - component: {fileID: 2147140964}
   - component: {fileID: 2147140963}
   m_Layer: 5
-  m_Name: ShopPanel
+  m_Name: VeikalaPanelis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2705,6 +3099,7 @@ RectTransform:
   m_Children:
   - {fileID: 1063668118}
   - {fileID: 140126578}
+  - {fileID: 277822589}
   m_Father: {fileID: 1533392845}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -2840,7 +3235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7703755475114427672, guid: 532220a25d21684428812859e059e486, type: 3}
       propertyPath: m_Name
-      value: ShopButton
+      value: VeikalaPoga
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2855,6 +3250,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 140126578}
     m_Modifications:
+    - target: {fileID: 54466030551910071, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: veikalaParvalditajs
+      value: 
+      objectReference: {fileID: 1533392847}
+    - target: {fileID: 470259803492947248, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: Cena
+      objectReference: {fileID: 0}
     - target: {fileID: 1149189026416138828, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2935,13 +3338,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2998567826859165241, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsSpraits
+      objectReference: {fileID: 0}
     - target: {fileID: 3846073375423170136, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_Name
-      value: ShopSlot
+      value: PrecesVieta
+      objectReference: {fileID: 0}
+    - target: {fileID: 5654698959970843020, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.6920013
+      objectReference: {fileID: 0}
+    - target: {fileID: 6170507799618458555, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: CenaTeksts
       objectReference: {fileID: 0}
     - target: {fileID: 8459760960135183541, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -25.495972
+      objectReference: {fileID: 0}
+    - target: {fileID: 8584831001910860861, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
+      propertyPath: m_Name
+      value: ZivsNosaukums
       objectReference: {fileID: 0}
     - target: {fileID: 8969875643207185369, guid: 689e4ac4908ffec419216cfc1c755b73, type: 3}
       propertyPath: shopSlots.Array.size
@@ -3000,5 +3419,6 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 822453508}
   - {fileID: 180006806}
-  - {fileID: 180293932}
   - {fileID: 1533392845}
+  - {fileID: 180293932}
+  - {fileID: 800687275}
