@@ -31,20 +31,28 @@ public class VeikalaParvalditajs : MonoBehaviour
     }
 
     public void meginatPirkt(ZivsSO zivsSO, int cena){
-        if(zivsSO != null && speletajaProgress.monetas >= cena) 
+        if(zivsSO == null) return;
+        
+        // Pārbaudīt limitu SQL datubāzē (max 3 no katra tipa)
+        if (!DatuBaze.Instance.VaiVarPirkt(zivsSO.id))
+        {
+            Debug.Log("Nevar nopirkt vairāk no šī tipa zivis! (Max: 3)");
+            return;
+        }
+        
+        if(speletajaProgress.monetas >= cena) 
         {
             speletajaProgress.monetas -= cena;
             speletajaProgress.monetuSkaitsTMP.text = "Monētas: " + speletajaProgress.monetas.ToString();
 
-            // Ielikt nopirkto zivi akvārijā
             if (akvarijaParvaldnieks != null)
             {
                 akvarijaParvaldnieks.IeliktZivi(zivsSO);
+                // Saglabā pozīcijas un pirkumu datubāzē
+                akvarijaParvaldnieks.SaglabatPozicijas();
             }
-            else
-            {
-                Debug.LogWarning("VeikalaParvalditajs: AkvarijaParvaldnieks nav piesaistīts!");
-            }
+            
+            DatuBaze.Instance.SaglabatProgresu(speletajaProgress.soli, speletajaProgress.monetas);
         }
     }
 }

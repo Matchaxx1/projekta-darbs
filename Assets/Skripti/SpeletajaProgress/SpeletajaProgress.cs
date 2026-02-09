@@ -18,15 +18,16 @@ public class SpeletajaProgress : MonoBehaviour
     // tikai prieks testa, velak janonem
     public int soli = 0;
     public int monetas = 0;
-    
-    private const string SOLI_KEY = "Soli";
-    private const string MONETAS_KEY = "Monetas";
 
     void Start()
     {
-
-        soli = PlayerPrefs.GetInt(SOLI_KEY, 0);
-        monetas = PlayerPrefs.GetInt(MONETAS_KEY, 0);
+        // Ielādē no SQLite datubāzes
+        var progress = DatuBaze.Instance.IeladetProgresu();
+        if (progress != null)
+        {
+            soli = progress.Soli;
+            monetas = progress.Monetas;
+        }
 
         if (pievienotSolusPoga != null)
         {
@@ -51,7 +52,7 @@ public class SpeletajaProgress : MonoBehaviour
         
         // Pārveido soļus uz monētām
         int jaunasMonetas = soli / soliPrieksMonetas;
-        if (jaunasMonetas > monetas)
+        if (jaunasMonetas > monetas) //japarmaina lai sitas paistam stradatu
         {
             int iegutasMonetas = jaunasMonetas - monetas;
             monetas = jaunasMonetas;
@@ -87,12 +88,10 @@ public class SpeletajaProgress : MonoBehaviour
         AtjaunotUI();
     }
 
-    /// Saglabā pašreizējos soļus un monētas PlayerPrefs
+    /// Saglabā pašreizējos soļus un monētas SQLite datubāzē
     void SaglabatProgresu()
     {
-        PlayerPrefs.SetInt(SOLI_KEY, soli);
-        PlayerPrefs.SetInt(MONETAS_KEY, monetas);
-        PlayerPrefs.Save();
+        DatuBaze.Instance.SaglabatProgresu(soli, monetas);
     }
     
     void AtjaunotUI()

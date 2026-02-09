@@ -9,7 +9,50 @@ public class AkvarijaParvaldnieks : MonoBehaviour
     [Header("Zivju iestatījumi")]
     [SerializeField] private GameObject zivsPrefabs;
 
+    [Header("Visas pieejamās zivis (jāpievieno inspectorī)")]
+    [SerializeField] private ZivsSO[] visasZivis;
+
     private List<GameObject> aktivasZivis = new List<GameObject>();
+    // Saglabā zivsId katram GameObject, lai varētu saglabāt pozīcijas
+    private List<int> aktivoZivjuId = new List<int>();
+
+    void Start()
+    {
+        AtjaunotSaglaboatasZivis();
+    }
+
+    // Atjauno visas saglabātās zivis no datubāzes
+    private void AtjaunotSaglaboatasZivis()
+    {
+        var saglaboatas = DatuBaze.Instance.IegutVisasZivis();
+
+        foreach (var zivsDB in saglaboatas)
+        {
+            ZivsSO zivsSO = AtrastZivsSO(zivsDB.ZivsId);
+            if (zivsSO == null)
+            {
+                Debug.LogWarning("Nav atrasts ZivsSO ar id: " + zivsDB.ZivsId);
+                continue;
+            }
+
+            Vector3 pozicija = new Vector3(zivsDB.PozicijaX, zivsDB.PozicijaY, 0f);
+            IzveidotZivi(zivsSO, pozicija);
+        }
+
+        Debug.Log("Atjaunotas " + saglaboatas.Count + " zivis no datubāzes");
+    }
+
+    // Meklē ZivsSO pēc id
+    private ZivsSO AtrastZivsSO(int zivsId)
+    {
+        if (visasZivis == null) return null;
+        foreach (var z in visasZivis)
+        {
+            if (z != null && z.id == zivsId)
+                return z;
+        }
+        return null;
+    }
 
     // Nārsto jaunu zivi akvārijā, pamatojoties uz ZivsSO datiem
     public void IeliktZivi(ZivsSO zivsSO)
@@ -20,6 +63,25 @@ public class AkvarijaParvaldnieks : MonoBehaviour
             return;
         }
 
+        if (akvarijs == null)
+        {
+            Debug.LogError("AkvarijaParvaldnieks: Nav piesaistīts akvarijs!");
+            return;
+        }
+
+        // Izvēlēties nejaušu vietu akvārijā
+        Vector3[] pasaulesStūri = new Vector3[4];
+        akvarijs.GetWorldCorners(pasaulesStūri);
+        float randX = Random.Range(pasaulesStūri[0].x, pasaulesStūri[2].x);
+        float randY = Random.Range(pasaulesStūri[0].y, pasaulesStūri[2].y);
+        Vector3 spawnPozicija = new Vector3(randX, randY, 0f);
+
+        IzveidotZivi(zivsSO, spawnPozicija);
+    }
+
+    // Kopīga metode zivs izveidošanai
+    private void IzveidotZivi(ZivsSO zivsSO, Vector3 pozicija)
+    {
         GameObject prefabs;
         if (zivsSO.zivsPrefabs != null)
             prefabs = zivsSO.zivsPrefabs;
@@ -32,32 +94,9 @@ public class AkvarijaParvaldnieks : MonoBehaviour
             return;
         }
 
-        if (akvarijs == null)
-        {
-            Debug.LogError("AkvarijaParvaldnieks: Nav piesaistīts akvarijs!");
-            return;
-        }
-
-        // Iegūt akvārija attēla robežas
-        Vector3[] pasaulesStūri = new Vector3[4];
-        akvarijs.GetWorldCorners(pasaulesStūri);
-
-        // Aprēķināt robežas no RectTransform stūriem
-        float minX = pasaulesStūri[0].x;
-        float maxX = pasaulesStūri[2].x;
-        float minY = pasaulesStūri[0].y;
-        float maxY = pasaulesStūri[2].y;
-
-        // Izvēlēties nejaušu vietu akvārijā
-        float randX = Random.Range(minX, maxX);
-        float randY = Random.Range(minY, maxY);
-        Vector3 spawnPozicija = new Vector3(randX, randY, 0f);
-
-        // Izveidot zivi ( varbut janonem quaternion )
-        GameObject jaunaZivs = Instantiate(prefabs, spawnPozicija, Quaternion.identity, transform); 
+        GameObject jaunaZivs = Instantiate(prefabs, pozicija, Quaternion.identity, transform);
         jaunaZivs.name = zivsSO.zivsNosaukums;
 
-        // Uzstādīt spraitu, ja prefabam ir SpriteRenderer
         SpriteRenderer sr = jaunaZivs.GetComponent<SpriteRenderer>();
         if (sr != null && zivsSO.zivsSpraits != null)
         {
@@ -65,15 +104,49 @@ public class AkvarijaParvaldnieks : MonoBehaviour
         }
 
         aktivasZivis.Add(jaunaZivs);
+        aktivoZivjuId.Add(zivsSO.id);
         Debug.Log("Zivs '" + zivsSO.zivsNosaukums + "' pievienota akvārijam!");
+    }
+
+    // Saglabā visu zivju pozīcijas datubāzē
+    public void SaglabatPozicijas()
+    {
+        var saraksts = new List<NopirktaZivsDB>();
+
+        for (int i = 0; i < aktivasZivis.Count; i++)
+        {
+            if (aktivasZivis[i] == null) continue;
+
+            saraksts.Add(new NopirktaZivsDB
+            {
+                ZivsId = aktivoZivjuId[i],
+                PozicijaX = aktivasZivis[i].transform.position.x,
+                PozicijaY = aktivasZivis[i].transform.position.y
+            });
+        }
+
+        DatuBaze.Instance.SaglabatZivjuPozicijas(saraksts);
+        Debug.Log("Saglabātas " + saraksts.Count + " zivju pozīcijas datubāzē");
     }
 
     // Atgriež aktīvo zivju skaitu akvārijā
     public int IegutZivjuSkaitu()
     {
-        // Noņem iznīcinātos objektus
         aktivasZivis.RemoveAll(z => z == null);
         return aktivasZivis.Count;
+    }
+
+    void OnApplicationQuit()
+    {
+        SaglabatPozicijas();
+    }
+
+    void OnApplicationPause(bool paused)
+    {
+        if (paused)
+        {
+            SaglabatPozicijas();
+        }
     }
 
     // VELAK JANONEM!!!!
