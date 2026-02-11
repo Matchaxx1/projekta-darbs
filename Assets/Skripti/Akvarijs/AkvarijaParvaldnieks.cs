@@ -97,6 +97,18 @@ public class AkvarijaParvaldnieks : MonoBehaviour
         GameObject jaunaZivs = Instantiate(prefabs, pozicija, Quaternion.identity, transform);
         jaunaZivs.name = zivsSO.zivsNosaukums;
 
+        // SVARĪGI: Uzreiz iestatīt Rigidbody2D, lai zivs nekrīt!
+        Rigidbody2D rb = jaunaZivs.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.gravityScale = 0f;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
+        else
+        {
+            Debug.LogWarning("Zivij nav Rigidbody2D komponentes!");
+        }
+
         SpriteRenderer sr = jaunaZivs.GetComponent<SpriteRenderer>();
         if (sr != null && zivsSO.zivsSpraits != null)
         {
@@ -134,6 +146,36 @@ public class AkvarijaParvaldnieks : MonoBehaviour
     {
         aktivasZivis.RemoveAll(z => z == null);
         return aktivasZivis.Count;
+    }
+
+    /// <summary>
+    /// Dzēš visas zivis no akvārija un datubāzes
+    /// </summary>
+    public void DzestVisasZivis()
+    {
+        // Iznīcina visus zivju GameObjects
+        foreach (var zivs in aktivasZivis)
+        {
+            if (zivs != null)
+            {
+                Destroy(zivs);
+            }
+        }
+
+        // Notīra sarakstus
+        aktivasZivis.Clear();
+        aktivoZivjuId.Clear();
+
+        // Dzēš no datubāzes
+        if (DatuBaze.Instance != null)
+        {
+            DatuBaze.Instance.DzestVisasZivis();
+            Debug.Log("Visas zivis dzēstas no akvārija un datubāzes!");
+        }
+        else
+        {
+            Debug.LogError("DatuBaze.Instance ir null!");
+        }
     }
 
     void OnApplicationQuit()

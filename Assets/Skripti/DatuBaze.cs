@@ -128,6 +128,29 @@ public class DatuBaze : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Dzēš visas zivis no datubāzes
+    /// </summary>
+    public void DzestVisasZivis()
+    {
+        db.Execute("DELETE FROM NopirktaZivsDB WHERE SpeletajaId = 1");
+        Debug.Log("Visas zivis dzēstas no datubāzes");
+    }
+
+    /// <summary>
+    /// Atiestatīt visu progresu (IZVĒLES testēšanai)
+    /// </summary>
+    public void AtiestatitVisu()
+    {
+        // Dzēš visas zivis
+        db.Execute("DELETE FROM NopirktaZivsDB WHERE SpeletajaId = 1");
+        
+        // Atiestatīt soļus un monētas uz 0
+        db.Update(new SpeletajsDB { Id = 1, Soli = 0, Monetas = 0 });
+        
+        Debug.Log("Viss progress atiestatīts!");
+    }
+
     void OnDestroy()
     {
         if (db != null)

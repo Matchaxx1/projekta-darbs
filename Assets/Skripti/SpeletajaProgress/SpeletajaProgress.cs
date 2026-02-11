@@ -22,13 +22,28 @@ public class SpeletajaProgress : MonoBehaviour
     void Start()
     {
         // Ielādē no SQLite datubāzes
-        var progress = DatuBaze.Instance.IeladetProgresu();
-        if (progress != null)
+        if (DatuBaze.Instance != null)
         {
-            soli = progress.Soli;
-            monetas = progress.Monetas;
+            var progress = DatuBaze.Instance.IeladetProgresu();
+            if (progress != null)
+            {
+                soli = progress.Soli;
+                monetas = progress.Monetas;
+            }
+        }
+        else
+        {
+            Debug.LogError("DatuBaze.Instance ir null! Pārliecinies, ka DatuBaze objekts eksistē scēnā.");
         }
 
+        AtjaunotUI();
+        Debug.Log("Spēlētāja progress ielādēts: " + soli + " soļi, " + monetas + " monētas");
+    }
+
+    void OnEnable()
+    {
+        // Reģistrē button listeners katru reizi, kad objekts tiek aktivizēts
+        // Tas ir būtiski Android ierīcēs, lai nodrošinātu, ka klikšķi darbojas
         if (pievienotSolusPoga != null)
         {
             pievienotSolusPoga.onClick.RemoveListener(PievienotSolus);
@@ -40,13 +55,26 @@ public class SpeletajaProgress : MonoBehaviour
             pievienotVairakSolusPoga.onClick.RemoveListener(PievienotTukstotsSolus);
             pievienotVairakSolusPoga.onClick.AddListener(PievienotTukstotsSolus);
         }
+    }
 
-        AtjaunotUI();
-        Debug.Log("Spēlētāja progress ielādēts: " + soli + " soļi, " + monetas + " monētas");
+    void OnDestroy()
+    {
+        // Notīrā listeners, lai izvairītos no atmiņas noplūdēm
+        if (pievienotSolusPoga != null)
+        {
+            pievienotSolusPoga.onClick.RemoveListener(PievienotSolus);
+        }
+
+        if (pievienotVairakSolusPoga != null)
+        {
+            pievienotVairakSolusPoga.onClick.RemoveListener(PievienotTukstotsSolus);
+        }
     }
     
     public void PievienotSolus()
     {
+        Debug.Log("PievienotSolus() izsaukts");
+        
         // Pievieno 100 soļus testēšanai
         soli += 100;
         
@@ -67,6 +95,8 @@ public class SpeletajaProgress : MonoBehaviour
     /// </summary>
     public void PievienotTukstotsSolus()
     {
+        Debug.Log("PievienotTukstotsSolus() izsaukts");
+        
         soli += 1000;
 
         // Pārveido soļus uz monētām
@@ -88,28 +118,62 @@ public class SpeletajaProgress : MonoBehaviour
         AtjaunotUI();
     }
 
+    /// <summary>
+    /// Atjaunina soļus no solu skaitītāja un automātiski pārrēķina monētas
+    /// </summary>
+    public void AtjauninatSolusNoSkaitītaja(int jaunieSoli)
+    {
+        soli = jaunieSoli;
+        
+        // Pārveido soļus uz monētām
+        int jaunasMonetas = soli / soliPrieksMonetas;
+        if (jaunasMonetas > monetas)
+        {
+            monetas = jaunasMonetas;
+        }
+        
+        AtjaunotUI();
+    }
+
     /// Saglabā pašreizējos soļus un monētas SQLite datubāzē
     void SaglabatProgresu()
     {
-        DatuBaze.Instance.SaglabatProgresu(soli, monetas);
+        if (DatuBaze.Instance != null)
+        {
+            DatuBaze.Instance.SaglabatProgresu(soli, monetas);
+        }
+        else
+        {
+            Debug.LogError("DatuBaze.Instance ir null! Nevar saglabāt progresu.");
+        }
     }
     
     void AtjaunotUI()
     {
+        // Atjaunina solus
         if (soluSkaits != null)
             soluSkaits.text = "Soli: " + soli;
         else if (soluSkaitsTMP != null)
             soluSkaitsTMP.text = "Soli: " + soli;
 
+        // Atjaunina monētas
         if (monetuSkaits != null)
             monetuSkaits.text = "Monētas: " + monetas;
         else if (monetuSkaitsTMP != null)
             monetuSkaitsTMP.text = "Monētas: " + monetas;
+
+        // Force Canvas update lai nodrošinātu, ka izmaiņas ir redzamas uz Android
+        Canvas.ForceUpdateCanvases();
+        
+        Debug.Log("UI atjaunots: " + soli + " soļi, " + monetas + " monētas");
     }
     
 
     void OnApplicationQuit()
     {
-        SaglabatProgresu();
+        if (DatuBaze.Instance != null)
+        {
+            SaglabatProgresu();
+        }
     }
 }

@@ -33,6 +33,12 @@ public class VeikalaParvalditajs : MonoBehaviour
     public void meginatPirkt(ZivsSO zivsSO, int cena){
         if(zivsSO == null) return;
         
+        if (DatuBaze.Instance == null)
+        {
+            Debug.LogError("DatuBaze.Instance ir null! Nevar pārbaudīt pirkumu.");
+            return;
+        }
+        
         // Pārbaudīt limitu SQL datubāzē (max 3 no katra tipa)
         if (!DatuBaze.Instance.VaiVarPirkt(zivsSO.id))
         {
@@ -40,10 +46,26 @@ public class VeikalaParvalditajs : MonoBehaviour
             return;
         }
         
+        if(speletajaProgress == null)
+        {
+            Debug.LogError("speletajaProgress ir null! Nevar veikt pirkumu.");
+            return;
+        }
+        
         if(speletajaProgress.monetas >= cena) 
         {
             speletajaProgress.monetas -= cena;
-            speletajaProgress.monetuSkaitsTMP.text = "Monētas: " + speletajaProgress.monetas.ToString();
+            
+            // Atjauno UI caur SpeletajaProgress klases metodi
+            // Tas nodrošina, ka teksts tiek atjaunots pareizi
+            if (speletajaProgress.monetuSkaitsTMP != null)
+            {
+                speletajaProgress.monetuSkaitsTMP.text = "Monētas: " + speletajaProgress.monetas.ToString();
+            }
+            else
+            {
+                Debug.LogWarning("monetuSkaitsTMP nav piesaistīts!");
+            }
 
             if (akvarijaParvaldnieks != null)
             {
@@ -51,8 +73,23 @@ public class VeikalaParvalditajs : MonoBehaviour
                 // Saglabā pozīcijas un pirkumu datubāzē
                 akvarijaParvaldnieks.SaglabatPozicijas();
             }
+            else
+            {
+                Debug.LogWarning("akvarijaParvaldnieks nav piesaistīts!");
+            }
             
-            DatuBaze.Instance.SaglabatProgresu(speletajaProgress.soli, speletajaProgress.monetas);
+            if (DatuBaze.Instance != null)
+            {
+                DatuBaze.Instance.SaglabatProgresu(speletajaProgress.soli, speletajaProgress.monetas);
+            }
+            else
+            {
+                Debug.LogError("DatuBaze.Instance ir null! Nevar saglabāt progresu.");
+            }
+        }
+        else
+        {
+            Debug.Log("Nav pietiekami daudz monētu! Nepieciešamas: " + cena + ", ir: " + speletajaProgress.monetas);
         }
     }
 }

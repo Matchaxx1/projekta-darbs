@@ -1,13 +1,18 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(SpriteRenderer))]// jamaina abi no siem
+[RequireComponent(typeof(SpriteRenderer))]
 public class ZivsKustiba : MonoBehaviour
 {
-    void Start()
+    void Awake()
     {
-        // Pārliecināties, ka Rigidbody2D ir uzstādīts
+        // Pārliecināties, ka Rigidbody2D ir uzstādīts PIRMS Start()
+        // Izmanto Awake(), lai garantētu, ka tas notiek pirmais
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0f;
+        if (rb != null)
+        {
+            rb.gravityScale = 0f;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
     }
 }
