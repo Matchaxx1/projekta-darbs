@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1030112060",
+    "project_id": "projekta-darbs-50366",
+    "storage_bucket": "projekta-darbs-50366.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030112060:android:f050fa8869be0a9cd89439",
+        "android_client_info": {
+          "package_name": "com.MatissStepulenoks.AquaGO"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCx-AtLClXWBBQ-E_QNvMvztFXcexueBaE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
