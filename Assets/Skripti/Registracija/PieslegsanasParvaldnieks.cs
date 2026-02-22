@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using System.Collections;
 using System.Threading.Tasks;
+using EasyUI.Popup;
 
 public class PieslegsanasParvaldnieks : MonoBehaviour
 {
@@ -72,19 +73,19 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
             switch (kludasKods)
             {
                 case AuthError.MissingEmail:
-                    kluda = "Nav ievadīts e-pasts!";
+                    Popup.Show ("<color=red>Kļūda </color>", "Nav ievadīts e-pasts!");
                     break;
                 case AuthError.MissingPassword:
-                    kluda = "Nav ievadīta parole!";
+                    Popup.Show ("<color=red>Kļūda </color>", "Nav ievadīta parole!");
                     break;
                 case AuthError.WrongPassword:
-                    kluda = "Nepareiza parole!";
+                    Popup.Show ("<color=red>Kļūda </color>", "Nepareiza parole!");
                     break;
                 case AuthError.InvalidEmail:
-                    kluda = "Nepareiza e-pasta adrese!";
+                    Popup.Show ("<color=red>Kļūda </color>", "Nepareiza e-pasta adrese!");
                     break;
                 case AuthError.UserNotFound:
-                    kluda = "Konts neeksistē!";
+                    Popup.Show ("<color=red>Kļūda </color>", "Konts neeksistē!");
                     break;
             }
             bridinajumsPieslegsanasTeksts.text = kluda;
@@ -96,8 +97,9 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
             bridinajumsPieslegsanasTeksts.text = "";
             apstiprinatPieslegsanasTeksts.text = "Pieslēdzies";
 
-            // Iestata lomu ka registrets lietotajs
+            // Iestata lomu ka registrets lietotajs (jo jau ir Firebase lietotājs)
             LietotajaLoma.IestatitKaRegistretu();
+            Debug.Log("Loma iestatīta: Registrets (pēc pieslēgšanās)");
             UnityEngine.SceneManagement.SceneManager.LoadScene("GalvenaisEkrans");
         }
     }
@@ -127,16 +129,16 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
                 switch (kludasKods)
                 {
                     case AuthError.MissingEmail:
-                        kluda = "Nav ievadīts e-pasts!";
+                        Popup.Show ("<color=red>Kļūda </color>", "Nav ievadīts e-pasts!");
                         break;
                     case AuthError.MissingPassword:
-                        kluda = "Nav ievadīta parole!";
+                        Popup.Show ("<color=red>Kļūda </color>", "Nav ievadīta parole!");
                         break;
                     case AuthError.WeakPassword:
-                        kluda = "Parolei jābūt vismaz 6 simboliem!";
+                        Popup.Show ("<color=red>Kļūda </color>", "Parolei jābūt vismaz 6 simbolu garai!");
                         break;
                     case AuthError.EmailAlreadyInUse:
-                        kluda = "E-pasta adrese jau tiek izmantota!";
+                        Popup.Show ("<color=red>Kļūda </color>", "E-pastu jau kāds izmanto!");
                         break;
                 }
                 bridinajumsRegistracijaTeksts.text = kluda;
@@ -161,8 +163,26 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
                     }
                     else
                     {
-                        // Iestata lomu ka registrets lietotajs
+                        // Saglaba vai bijis viesis PIRMS lomas mainisanas
+                        bool bijViesis = LietotajaLoma.IrViesis();
+
+                        // Iestata lomu ka registrets lietotajs (jo tikai reģistrētie var registrēties)
                         LietotajaLoma.IestatitKaRegistretu();
+                        Debug.Log("Loma iestatīta: Registrets (pēc reģistrācijas)");
+
+                        // Ja bijis viesis - parnes SQLite datus uz Firestore
+                        if (bijViesis && DatuParvaldnieks.Instance != null)
+                        {
+                            Debug.Log("Viesis reģistrējas - pārnesam lokālos datus uz Firestore...");
+                            Task migracijasTask = DatuParvaldnieks.Instance.ParnestViesaDatusUzMakoni();
+                            yield return new WaitUntil(() => migracijasTask.IsCompleted);
+
+                            if (migracijasTask.Exception != null)
+                                Debug.LogWarning("Datu pārnešana neizdevās: " + migracijasTask.Exception);
+                            else
+                                Debug.Log("Viesa dati veiksmīgi pārnesti uz Firestore!");
+                        }
+
                         bridinajumsRegistracijaTeksts.text = "";
                         UnityEngine.SceneManagement.SceneManager.LoadScene("GalvenaisEkrans");
                     }

@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1030112060:android:f050fa8869be0a9cd89439",
+        "mobilesdk_app_id": "1:1030112060:android:d702a747cf689308d89439",
         "android_client_info": {
-          "package_name": "com.MatissStepulenoks.AquaGO"
+          "package_name": "com.MatissStepulenoksProjekts.AquaGO"
         }
       },
       "oauth_client": [],

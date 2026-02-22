@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Katrs lietotājs var lasīt un rakstīt tikai savus datus
+    match /lietotaji/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Zivju apakškolekcija - tikai pats lietotājs
+      match /zivis/{zivsId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Viss pārējais - aizliegts
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

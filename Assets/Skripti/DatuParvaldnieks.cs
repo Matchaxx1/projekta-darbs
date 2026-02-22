@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-// Vienotais datu parvaldnieks - pagaidam viss iet caur SQLite
+// Vienotais datu parvaldnieks - izvelas starp SQLite (viesis) un Firestore (registrets)
 [DefaultExecutionOrder(-90)]
 public class DatuParvaldnieks : MonoBehaviour
 {
@@ -13,6 +13,7 @@ public class DatuParvaldnieks : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
             LietotajaLoma.IeladetLomu();
         }
@@ -22,92 +23,171 @@ public class DatuParvaldnieks : MonoBehaviour
         }
     }
 
+    // Vai lietotajs ir registrets un Firestore ir pieejams
+    private bool IzmantotMakoni()
+    {
+        return LietotajaLoma.IrRegistrets() && MakonaDB.Instance != null;
+    }
+
     // ===== SPĒLĒTĀJA PROGRESS =====
 
-    public void SaglabatProgresu(int soli, int monetas)
+    public async void SaglabatProgresu(int soli, int monetas)
     {
-        if (DatuBaze.Instance != null)
+        if (IzmantotMakoni())
+        {
+            await MakonaDB.Instance.SaglabatProgresu(soli, monetas);
+        }
+        else if (DatuBaze.Instance != null)
         {
             DatuBaze.Instance.SaglabatProgresu(soli, monetas);
         }
-        else
-        {
-            Debug.LogError("DatuParvaldnieks: Nav pieejama neviena datubāze!");
-        }
     }
 
-    public Task<(int soli, int monetas)> IeladetProgresu()
+    public async Task<(int soli, int monetas)> IeladetProgresu()
     {
+        if (IzmantotMakoni())
+        {
+            return await MakonaDB.Instance.IeladetProgresu();
+        }
+
         if (DatuBaze.Instance != null)
         {
             var progress = DatuBaze.Instance.IeladetProgresu();
             if (progress != null)
-                return Task.FromResult((progress.Soli, progress.Monetas));
-            return Task.FromResult((0, 0));
+                return (progress.Soli, progress.Monetas);
         }
 
-        Debug.LogError("DatuParvaldnieks: Nav pieejama neviena datubāze!");
-        return Task.FromResult((0, 0));
+        return (0, 0);
     }
 
     // ===== ZIVJU PIRKUMI =====
 
-    public void PievienotNopirktoZivi(int zivsId, float x, float y)
+    // Pievieno jaunu nopirkto zivi
+    public async void PievienotNopirktoZivi(int zivsId)
     {
-        if (DatuBaze.Instance != null)
+        if (IzmantotMakoni())
         {
-            DatuBaze.Instance.PievienotNopirktoZivi(zivsId, x, y);
+            await MakonaDB.Instance.PievienotNopirktoZivi(zivsId);
+        }
+        else if (DatuBaze.Instance != null)
+        {
+            DatuBaze.Instance.PievienotNopirktoZivi(zivsId);
         }
     }
 
-    public Task<int> IegutNopirktoSkaitu(int zivsId)
+    // Cik zivis no konkreta tipa ir nopirktas
+    public async Task<int> IegutNopirktoSkaitu(int zivsId)
     {
+        if (IzmantotMakoni())
+        {
+            return await MakonaDB.Instance.IegutNopirktoSkaitu(zivsId);
+        }
+
         if (DatuBaze.Instance != null)
         {
-            return Task.FromResult(DatuBaze.Instance.IegutNopirktoSkaitu(zivsId));
+            return DatuBaze.Instance.IegutNopirktoSkaitu(zivsId);
         }
-        return Task.FromResult(0);
+
+        return 0;
     }
 
-    public Task<bool> VaiVarPirkt(int zivsId)
+    // Vai var nopirkt vel (max 3)
+    public async Task<bool> VaiVarPirkt(int zivsId)
     {
+        if (IzmantotMakoni())
+        {
+            return await MakonaDB.Instance.VaiVarPirkt(zivsId);
+        }
+
         if (DatuBaze.Instance != null)
         {
-            return Task.FromResult(DatuBaze.Instance.VaiVarPirkt(zivsId));
+            return DatuBaze.Instance.VaiVarPirkt(zivsId);
         }
-        return Task.FromResult(false);
+
+        return false;
     }
 
-    public Task<List<NopirktaZivsDB>> IegutVisasZivis()
+    // Iegust visas saglabatas zivis
+    public async Task<List<NopirktaZivsDB>> IegutVisasZivis()
     {
+        if (IzmantotMakoni())
+        {
+            return await MakonaDB.Instance.IegutVisasZivis();
+        }
+
         if (DatuBaze.Instance != null)
         {
-            return Task.FromResult(DatuBaze.Instance.IegutVisasZivis());
+            return DatuBaze.Instance.IegutVisasZivis();
         }
-        return Task.FromResult(new List<NopirktaZivsDB>());
+
+        return new List<NopirktaZivsDB>();
     }
 
-    public void SaglabatZivjuPozicijas(List<NopirktaZivsDB> zivis)
+    // Dzes visas zivis
+    public async void DzestVisasZivis()
     {
-        if (DatuBaze.Instance != null)
+        if (IzmantotMakoni())
         {
-            DatuBaze.Instance.SaglabatZivjuPozicijas(zivis);
+            await MakonaDB.Instance.DzestVisasZivis();
         }
-    }
-
-    public void DzestVisasZivis()
-    {
-        if (DatuBaze.Instance != null)
+        else if (DatuBaze.Instance != null)
         {
             DatuBaze.Instance.DzestVisasZivis();
         }
     }
 
-    public void AtiestatitVisu()
+    // Dzes vienu zivi pec tipa (piem. pārdošanas gadījumā)
+    public async void DzestVienuZiviPecTipa(int zivsId)
     {
-        if (DatuBaze.Instance != null)
+        if (IzmantotMakoni())
+        {
+            await MakonaDB.Instance.DzestVienuZiviPecTipa(zivsId);
+        }
+        else if (DatuBaze.Instance != null)
+        {
+            DatuBaze.Instance.DzestVienuZiviPecTipa(zivsId);
+        }
+    }
+
+    // Atiestatit visu progresu
+    public async void AtiestatitVisu()
+    {
+        if (IzmantotMakoni())
+        {
+            await MakonaDB.Instance.AtiestatitVisu();
+        }
+        else if (DatuBaze.Instance != null)
         {
             DatuBaze.Instance.AtiestatitVisu();
         }
+    }
+
+    // Parnes viesa SQLite datus uz Firestore (izsauc pec registracijas)
+    public async Task ParnestViesaDatusUzMakoni()
+    {
+        if (MakonaDB.Instance == null)
+        {
+            Debug.LogWarning("ParnestViesaDatusUzMakoni: MakonaDB nav pieejams!");
+            return;
+        }
+
+        int soli = 0;
+        int monetas = 0;
+        List<NopirktaZivsDB> zivis = new List<NopirktaZivsDB>();
+
+        // Lasa no SQLite (viesa datubāze), ja tā ir atvērta
+        if (DatuBaze.Instance != null)
+        {
+            var progress = DatuBaze.Instance.IeladetProgresu();
+            if (progress != null)
+            {
+                soli = progress.Soli;
+                monetas = progress.Monetas;
+            }
+            zivis = DatuBaze.Instance.IegutVisasZivis();
+        }
+
+        // Augšupielādē uz Firestore
+        await MakonaDB.Instance.ParnestViesaDatus(soli, monetas, zivis);
     }
 }

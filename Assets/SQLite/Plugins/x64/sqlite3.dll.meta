@@ -18,7 +18,7 @@ PluginImporter:
         AndroidSharedLibraryType: Executable
         CPU: ARMv7
     Any:
-      enabled: 0
+      enabled: 1
       settings:
         Exclude Android: 1
         Exclude Editor: 0
@@ -31,11 +31,11 @@ PluginImporter:
       settings:
         CPU: x86_64
         DefaultValueInitialized: true
-        OS: Windows
+        OS: AnyOS
     Linux64:
       enabled: 1
       settings:
-        CPU: x86_64
+        CPU: None
     OSXUniversal:
       enabled: 1
       settings:

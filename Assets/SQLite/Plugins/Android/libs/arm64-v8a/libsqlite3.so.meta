@@ -19,7 +19,7 @@ PluginImporter:
         CPU: ARM64
         Is16KbAligned: true
     Any:
-      enabled: 0
+      enabled: 1
       settings:
         Exclude Android: 0
         Exclude Editor: 1

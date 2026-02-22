@@ -10,14 +10,16 @@ public class PrecesVieta : MonoBehaviour
     public Image zivsSpraits;
 
     private int cena;
+    private int zivsId;
 
     [SerializeField] private VeikalaParvalditajs veikalaParvalditajs;
     
-    public void Uzstadit(ZivsSO newZivsSO, int cena)
+    public void Uzstadit(ZivsSO newZivsSO, int cena, int zivsId)
     {
         // Aizpilda veikala lodziņu ar visu zivs doto informāciju.
         ZivsSO = newZivsSO;
         this.cena = cena;
+        this.zivsId = zivsId;
         zivsSpraits.sprite = ZivsSO.zivsSpraits;
         zivsNosaukums.text = ZivsSO.zivsNosaukums;
         zivsCena.text = cena.ToString();
@@ -25,6 +27,6 @@ public class PrecesVieta : MonoBehaviour
 
     public void PiespiezotPirktPogu()
     {
-        veikalaParvalditajs.meginatPirkt(ZivsSO, cena);
+        veikalaParvalditajs.meginatPirkt(ZivsSO, cena, zivsId);
     }
 }

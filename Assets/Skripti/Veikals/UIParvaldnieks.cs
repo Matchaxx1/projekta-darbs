@@ -7,14 +7,49 @@ public class UIParvaldnieks : MonoBehaviour
     public GameObject veikalaUI;
     public GameObject kontaUI;
     public GameObject izveleUI;
+    public GameObject piesliegsanasPoga;
+    public GameObject registracijasPoga;
+    public ProfilaInformacija profilaInfo;
+    public GameObject pieslegtiesUI;
 
     private void Start()
     {
-        // Parbaudit vai lietotajs jau ir izvelejies (viesis vai registrets)
-        if (LietotajaLoma.PasreizejaLoma != LietotajaLoma.Loma.Nav && izveleUI != null)
+        // Radam izveleUI tikai tad, ja lietotajam nav lomas (nav izvelejies)
+        if(izveleUI != null)
         {
-            izveleUI.GetComponent<CanvasGroup>().alpha = 0f;
-            izveleUI.GetComponent<CanvasGroup>().blocksRaycasts = false;
+            if(LietotajaLoma.PasreizejaLoma == LietotajaLoma.Loma.Nav)
+            {
+                izveleUI.GetComponent<CanvasGroup>().alpha = 1f;
+                izveleUI.GetComponent<CanvasGroup>().blocksRaycasts = true;
+                izveleUI.GetComponent<CanvasGroup>().interactable = true;
+            }
+            else
+            {
+                izveleUI.GetComponent<CanvasGroup>().alpha = 0f;
+                izveleUI.GetComponent<CanvasGroup>().blocksRaycasts = false;
+                izveleUI.GetComponent<CanvasGroup>().interactable = false;
+            }
+        }
+
+        // Parvaldi piesliegsanas un registracijas pogu redzesamibu
+        AuthPogasParvalde();
+    }
+    
+    // Parāda/paslēpj pieslēgšanās un reģistrācijas pogas atkarībā no lomas
+
+    
+    public void AuthPogasParvalde()
+    {
+        bool irViesis = LietotajaLoma.IrViesis();
+        
+        if (piesliegsanasPoga != null)
+        {
+            piesliegsanasPoga.SetActive(irViesis);
+        }
+        
+        if (registracijasPoga != null)
+        {
+            registracijasPoga.SetActive(irViesis);
         }
     }
 
@@ -42,6 +77,12 @@ public class UIParvaldnieks : MonoBehaviour
         {
             kontaUI.GetComponent<CanvasGroup>().alpha = 1f;
             kontaUI.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            
+            // Atjauno profila informāciju
+            if(profilaInfo != null)
+            {
+                profilaInfo.AtjaunotProfiluInfo();
+            }
         }
     }
 
@@ -53,7 +94,7 @@ public class UIParvaldnieks : MonoBehaviour
             kontaUI.GetComponent<CanvasGroup>().blocksRaycasts = false;
         }
     }
-    public void AtvērtPieslēgšanos()
+    public void AtvertPieslegsanos()
     {
         SceneManager.LoadScene("RegistracijasEkrans");
     }

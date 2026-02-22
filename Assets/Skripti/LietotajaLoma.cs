@@ -12,13 +12,23 @@ public static class LietotajaLoma
 
     private const string LOMA_KEY = "lietotaja_loma";
     private static Loma _pasreizejaLoma = Loma.Nav;
+    private static bool _irIeladeta = false;
 
     public static Loma PasreizejaLoma
     {
-        get => _pasreizejaLoma;
+        get
+        {
+            // Automātiski ielādē lomu, ja vēl nav ielādēta
+            if (!_irIeladeta)
+            {
+                IeladetLomu();
+            }
+            return _pasreizejaLoma;
+        }
         private set
         {
             _pasreizejaLoma = value;
+            _irIeladeta = true;
             PlayerPrefs.SetInt(LOMA_KEY, (int)value);
             PlayerPrefs.Save();
             Debug.Log("Lietotāja loma iestatīta: " + value);
@@ -31,11 +41,14 @@ public static class LietotajaLoma
         if (PlayerPrefs.HasKey(LOMA_KEY))
         {
             _pasreizejaLoma = (Loma)PlayerPrefs.GetInt(LOMA_KEY, 0);
+            _irIeladeta = true;
             Debug.Log("Lietotāja loma ielādēta: " + _pasreizejaLoma);
         }
         else
         {
             _pasreizejaLoma = Loma.Nav;
+            _irIeladeta = true;
+            Debug.Log("Nav saglabātas lomas, iestatīta: Nav");
         }
     }
 

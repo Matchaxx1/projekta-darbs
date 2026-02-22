@@ -19,25 +19,29 @@ public class SpeletajaProgress : MonoBehaviour
     public int soli = 0;
     public int monetas = 0;
 
-    void Start()
+    async void Start()
     {
-        // Ielādē no SQLite datubāzes
-        if (DatuBaze.Instance != null)
+        // Ielādē progresu caur DatuParvaldnieks (SQLite vai Firestore)
+        if (DatuParvaldnieks.Instance != null)
         {
-            var progress = DatuBaze.Instance.IeladetProgresu();
-            if (progress != null)
+            try
             {
-                soli = progress.Soli;
-                monetas = progress.Monetas;
+                var progress = await DatuParvaldnieks.Instance.IeladetProgresu();
+                soli = progress.soli;
+                monetas = progress.monetas;
+                Debug.Log("Progress ielādēts no datubāzes: " + soli + " soļi, " + monetas + " monētas");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Neizdevās ielādēt progresu: " + e.Message);
             }
         }
         else
         {
-            Debug.LogError("DatuBaze.Instance ir null! Pārliecinies, ka DatuBaze objekts eksistē scēnā.");
+            Debug.LogError("DatuParvaldnieks.Instance ir null! Pārliecinies, ka DatuParvaldnieks objekts eksistē scēnā.");
         }
 
         AtjaunotUI();
-        Debug.Log("Spēlētāja progress ielādēts: " + soli + " soļi, " + monetas + " monētas");
     }
 
     void OnEnable()
@@ -113,8 +117,7 @@ public class SpeletajaProgress : MonoBehaviour
     
     void SaglabatUnAtjaunotUI()
     {
-        // Saglabā progresu un atjaunina UI
-        SaglabatProgresu();
+        // Atjaunina tikai UI - datubaze tiek saglabata tikai aizverot speli
         AtjaunotUI();
     }
 
@@ -132,19 +135,20 @@ public class SpeletajaProgress : MonoBehaviour
             monetas = jaunasMonetas;
         }
         
+        // Tikai UI - datubaze tiek saglabata aizverot speli
         AtjaunotUI();
     }
 
-    /// Saglabā pašreizējos soļus un monētas SQLite datubāzē
+    /// Saglabā pašreizējos soļus un monētas (SQLite vai Firestore, atkarībā no lomas)
     void SaglabatProgresu()
     {
-        if (DatuBaze.Instance != null)
+        if (DatuParvaldnieks.Instance != null)
         {
-            DatuBaze.Instance.SaglabatProgresu(soli, monetas);
+            DatuParvaldnieks.Instance.SaglabatProgresu(soli, monetas);
         }
         else
         {
-            Debug.LogError("DatuBaze.Instance ir null! Nevar saglabāt progresu.");
+            Debug.LogError("DatuParvaldnieks.Instance ir null! Nevar saglabāt progresu.");
         }
     }
     
@@ -169,9 +173,19 @@ public class SpeletajaProgress : MonoBehaviour
     }
     
 
+    // Android neizmanto OnApplicationQuit - izmanto OnApplicationPause
+    void OnApplicationPause(bool pauze)
+    {
+        if(pauze && DatuParvaldnieks.Instance != null)
+        {
+            SaglabatProgresu();
+            Debug.Log("Progress saglabāts (pauze): " + soli + " soļi, " + monetas + " monētas");
+        }
+    }
+
     void OnApplicationQuit()
     {
-        if (DatuBaze.Instance != null)
+        if (DatuParvaldnieks.Instance != null)
         {
             SaglabatProgresu();
         }

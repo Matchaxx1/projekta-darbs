@@ -22,8 +22,6 @@ public class NopirktaZivsDB
     public int SpeletajaId { get; set; }  // FK -> SpeletajsDB.Id
 
     public int ZivsId { get; set; }       // Atbilst ZivsSO.id
-    public float PozicijaX { get; set; }
-    public float PozicijaY { get; set; }
 }
 
 [DefaultExecutionOrder(-100)]
@@ -39,8 +37,18 @@ public class DatuBaze : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
-            AtvertDatuBazi();
+
+            // SQLite tikai viesiem - registretiem lietotajiem izmanto Firestore
+            if(!LietotajaLoma.IrRegistrets())
+            {
+                AtvertDatuBazi();
+            }
+            else
+            {
+                Debug.Log("Registrets lietotajs - SQLite netiek atverta");
+            }
         }
         else
         {
@@ -61,8 +69,19 @@ public class DatuBaze : MonoBehaviour
             db.Insert(new SpeletajsDB { Id = 1, Soli = 0, Monetas = 0 });
         }
 
+        NotiritNederigusZivjuId();
+
         Debug.Log("=== SQLite datubāze atvērta ===");
         Debug.Log("Datubāzes faila atrašanās vieta: " + dbCels);
+    }
+
+    private void NotiritNederigusZivjuId()
+    {
+        int dzesti = db.Execute("DELETE FROM NopirktaZivsDB WHERE SpeletajaId = 1 AND ZivsId <= 0");
+        if (dzesti > 0)
+        {
+            Debug.Log("Notīrīti nederīgi zivju ieraksti (ZivsId <= 0): " + dzesti);
+        }
     }
 
     // ===== SPĒLĒTĀJA PROGRESS =====
@@ -79,15 +98,13 @@ public class DatuBaze : MonoBehaviour
 
     // ===== ZIVJU PIRKUMI =====
 
-    // Pievieno jaunu zivi ar pozīciju
-    public void PievienotNopirktoZivi(int zivsId, float x, float y)
+    // Pievieno jaunu nopirkto zivi
+    public void PievienotNopirktoZivi(int zivsId)
     {
         db.Insert(new NopirktaZivsDB
         {
             SpeletajaId = 1,
-            ZivsId = zivsId,
-            PozicijaX = x,
-            PozicijaY = y
+            ZivsId = zivsId
         });
     }
 
@@ -113,21 +130,6 @@ public class DatuBaze : MonoBehaviour
             .ToList();
     }
 
-    // Atjaunina visu zivju pozīcijas (dzēš vecās, ievieto jaunās)
-    public void SaglabatZivjuPozicijas(List<NopirktaZivsDB> zivis)
-    {
-        // Dzēš visas esošās zivis šim spēlētājam
-        db.Execute("DELETE FROM NopirktaZivsDB WHERE SpeletajaId = 1");
-
-        // Ievieto jaunās ar aktuālajām pozīcijām
-        foreach (var zivs in zivis)
-        {
-            zivs.Id = 0; // Lai AutoIncrement strādā
-            zivs.SpeletajaId = 1;
-            db.Insert(zivs);
-        }
-    }
-
     /// <summary>
     /// Dzēš visas zivis no datubāzes
     /// </summary>
@@ -135,6 +137,21 @@ public class DatuBaze : MonoBehaviour
     {
         db.Execute("DELETE FROM NopirktaZivsDB WHERE SpeletajaId = 1");
         Debug.Log("Visas zivis dzēstas no datubāzes");
+    }
+
+    /// <summary>
+    /// Dzēš vienu zivi pēc tās tipa (pirmo atrasto)
+    /// </summary>
+    public void DzestVienuZiviPecTipa(int zivsId)
+    {
+        var zivs = db.Table<NopirktaZivsDB>()
+            .Where(z => z.SpeletajaId == 1 && z.ZivsId == zivsId)
+            .FirstOrDefault();
+        if (zivs != null)
+        {
+            db.Delete(zivs);
+            Debug.Log("Zivs ar tipu " + zivsId + " dzēsta no datubāzes");
+        }
     }
 
     /// <summary>

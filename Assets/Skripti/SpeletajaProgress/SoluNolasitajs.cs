@@ -44,14 +44,8 @@ public class SoluNolasitajs : MonoBehaviour
 
     void OnApplicationPause(bool pauseStatus)
     {
-        // Saglabā progresu, kad app iet fonā vai atgriežas
-        if (pauseStatus && speletajaProgress != null)
-        {
-            if (DatuBaze.Instance != null)
-            {
-                DatuBaze.Instance.SaglabatProgresu(speletajaProgress.soli, speletajaProgress.monetas);
-            }
-        }
+        // Saglabašana notiek SpeletajaProgress.OnApplicationPause
+        // Te neko nedaram, lai nesutitu dubultu pieprasijumu uz datubazi
     }
 
 
