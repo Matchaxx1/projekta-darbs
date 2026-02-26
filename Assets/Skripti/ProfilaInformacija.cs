@@ -114,8 +114,16 @@ public class ProfilaInformacija : MonoBehaviour
     }
 
     // Izrakstīšanās funkcija
-    public void Izrakstities()
+    public async void Izrakstities()
     {
+        // Saglabāt progresu pirms izrakstīšanās
+        SpeletajaProgress progress = FindFirstObjectByType<SpeletajaProgress>();
+        if (progress != null && DatuParvaldnieks.Instance != null)
+        {
+            await DatuParvaldnieks.Instance.SaglabatProgresu(progress.soli, progress.monetas, progress.kopejasMonetas);
+            Debug.Log("Progress saglabāts pirms izrakstīšanās");
+        }
+
         if (auth != null)
         {
             auth.SignOut();

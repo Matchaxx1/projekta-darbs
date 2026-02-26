@@ -1,0 +1,1352 @@
+fileFormatVersion: 2
+guid: 87c5cf86d82103a449492a7102d48773
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3057478326849294310
+    second: Fishtank_decorations_by_Brysia_0
+  - first:
+      213: 6152957068561440300
+    second: Fishtank_decorations_by_Brysia_1
+  - first:
+      213: 1724923756365058154
+    second: Fishtank_decorations_by_Brysia_2
+  - first:
+      213: 7630502642904368457
+    second: Fishtank_decorations_by_Brysia_3
+  - first:
+      213: 481002367687366062
+    second: Fishtank_decorations_by_Brysia_4
+  - first:
+      213: -2475908556290538268
+    second: Fishtank_decorations_by_Brysia_5
+  - first:
+      213: -4518014727429512809
+    second: Fishtank_decorations_by_Brysia_6
+  - first:
+      213: -444667842731902015
+    second: Fishtank_decorations_by_Brysia_7
+  - first:
+      213: 4236080788739822666
+    second: Fishtank_decorations_by_Brysia_8
+  - first:
+      213: 8354752826213354851
+    second: Fishtank_decorations_by_Brysia_9
+  - first:
+      213: 2054407152350928832
+    second: Fishtank_decorations_by_Brysia_10
+  - first:
+      213: -2964532372761100196
+    second: Fishtank_decorations_by_Brysia_11
+  - first:
+      213: 5051951214506685341
+    second: Fishtank_decorations_by_Brysia_12
+  - first:
+      213: -5978470051972229563
+    second: Fishtank_decorations_by_Brysia_13
+  - first:
+      213: 4670717303083854340
+    second: Fishtank_decorations_by_Brysia_14
+  - first:
+      213: -4720546455503878671
+    second: Fishtank_decorations_by_Brysia_15
+  - first:
+      213: 2957687382543369924
+    second: Fishtank_decorations_by_Brysia_16
+  - first:
+      213: 8785591716798800623
+    second: Fishtank_decorations_by_Brysia_17
+  - first:
+      213: 7754640593173040306
+    second: Fishtank_decorations_by_Brysia_18
+  - first:
+      213: 5301458841397412715
+    second: Fishtank_decorations_by_Brysia_19
+  - first:
+      213: 4122819765555050456
+    second: Fishtank_decorations_by_Brysia_20
+  - first:
+      213: 1054902417291784062
+    second: Fishtank_decorations_by_Brysia_21
+  - first:
+      213: 3577070966022983566
+    second: Fishtank_decorations_by_Brysia_22
+  - first:
+      213: 6676865979945123525
+    second: Fishtank_decorations_by_Brysia_23
+  - first:
+      213: -1789256872028412764
+    second: Fishtank_decorations_by_Brysia_24
+  - first:
+      213: 5407701016734958454
+    second: Fishtank_decorations_by_Brysia_25
+  - first:
+      213: -9071967774719710433
+    second: Fishtank_decorations_by_Brysia_26
+  - first:
+      213: -151475294640281940
+    second: Fishtank_decorations_by_Brysia_27
+  - first:
+      213: -8870457262862103441
+    second: Fishtank_decorations_by_Brysia_28
+  - first:
+      213: 8365061623511399205
+    second: Fishtank_decorations_by_Brysia_29
+  - first:
+      213: 54217270277978282
+    second: Fishtank_decorations_by_Brysia_30
+  - first:
+      213: 3895064735719185532
+    second: Fishtank_decorations_by_Brysia_31
+  - first:
+      213: -3376664507421381568
+    second: Fishtank_decorations_by_Brysia_32
+  - first:
+      213: -4661056271243485528
+    second: Fishtank_decorations_by_Brysia_33
+  - first:
+      213: 2299658811864786880
+    second: Fishtank_decorations_by_Brysia_34
+  - first:
+      213: 2809399750537370512
+    second: Fishtank_decorations_by_Brysia_35
+  - first:
+      213: 3235148829399531624
+    second: Fishtank_decorations_by_Brysia_36
+  - first:
+      213: -1608964329513308077
+    second: Fishtank_decorations_by_Brysia_37
+  - first:
+      213: -1610646479504554631
+    second: Fishtank_decorations_by_Brysia_38
+  - first:
+      213: 681570106936517323
+    second: Fishtank_decorations_by_Brysia_39
+  - first:
+      213: 3138469015739111935
+    second: Fishtank_decorations_by_Brysia_40
+  - first:
+      213: -4943096586399374304
+    second: Fishtank_decorations_by_Brysia_41
+  - first:
+      213: -7051299240540228652
+    second: Fishtank_decorations_by_Brysia_42
+  - first:
+      213: 3883295466171759121
+    second: Fishtank_decorations_by_Brysia_43
+  - first:
+      213: 2273586942452896536
+    second: Fishtank_decorations_by_Brysia_44
+  - first:
+      213: -1387667267604777297
+    second: Fishtank_decorations_by_Brysia_45
+  - first:
+      213: 8974044529381080750
+    second: Fishtank_decorations_by_Brysia_46
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 175
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1031b339a7a195d0800000000000000
+      internalID: -3057478326849294310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 143
+        width: 17
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2e55d5aad1b36550800000000000000
+      internalID: 6152957068561440300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_2
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 175
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6095c2740920f710800000000000000
+      internalID: 1724923756365058154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_3
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 175
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9458effb9bdf4e960800000000000000
+      internalID: 7630502642904368457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_4
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 143
+        width: 23
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea5902eda1ddca600800000000000000
+      internalID: 481002367687366062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_5
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 175
+        width: 26
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e4c3f5394ec3add0800000000000000
+      internalID: -2475908556290538268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_6
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 143
+        width: 21
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 791a499fa89cc41c0800000000000000
+      internalID: -4518014727429512809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_7
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 143
+        width: 35
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cbfce6f3f834d9f0800000000000000
+      internalID: -444667842731902015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_8
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 143
+        width: 77
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4491bc980599ca30800000000000000
+      internalID: 4236080788739822666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_9
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 159
+        width: 57
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36d43a81e6b02f370800000000000000
+      internalID: 8354752826213354851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_10
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 160
+        width: 17
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cf16eb9b68b28c10800000000000000
+      internalID: 2054407152350928832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_11
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 143
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c50cd64838ddbd6d0800000000000000
+      internalID: -2964532372761100196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_12
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 144
+        width: 28
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d93364bfcd22c1640800000000000000
+      internalID: 5051951214506685341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_13
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 128
+        width: 47
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54652ebb925380da0800000000000000
+      internalID: -5978470051972229563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 111
+        width: 17
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40a659004a8b1d040800000000000000
+      internalID: 4670717303083854340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_15
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 111
+        width: 31
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f546fd52004d7eb0800000000000000
+      internalID: -4720546455503878671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_16
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 111
+        width: 23
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c607210101db0920800000000000000
+      internalID: 2957687382543369924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_17
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 111
+        width: 25
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe2286d4e11bce970800000000000000
+      internalID: 8785591716798800623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_18
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 85
+        width: 130
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bc47ec98840e9b60800000000000000
+      internalID: 7754640593173040306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_19
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 98
+        width: 27
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b63c8d85ab0929940800000000000000
+      internalID: 5301458841397412715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 63
+        width: 49
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d73edeabb2373930800000000000000
+      internalID: 4122819765555050456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_21
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 63
+        width: 48
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7fa06fc824c3ae00800000000000000
+      internalID: 1054902417291784062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_22
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 47
+        width: 36
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8fc92a671f44a130800000000000000
+      internalID: 3577070966022983566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_23
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 68
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cef483bb3ef8ac50800000000000000
+      internalID: 6676865979945123525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_24
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 68
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a4e1d2da584b27e0800000000000000
+      internalID: -1789256872028412764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_25
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 67
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 673810a6c630c0b40800000000000000
+      internalID: 5407701016734958454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_26
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 66
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1b6a0ecf55e91280800000000000000
+      internalID: -9071967774719710433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_27
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 64
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca6e7b6a50ad5edf0800000000000000
+      internalID: -151475294640281940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_28
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 63
+        width: 22
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6c02dbfd1ec5e480800000000000000
+      internalID: -8870457262862103441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_29
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 0
+        width: 13
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52b36a10a3ba61470800000000000000
+      internalID: 8365061623511399205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_30
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa83c9fe15e90c000800000000000000
+      internalID: 54217270277978282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_31
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 47
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7c51bd7dbc0e0630800000000000000
+      internalID: 3895064735719185532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_32
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 47
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04caa75558da321d0800000000000000
+      internalID: -3376664507421381568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_33
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 47
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aedc62440a905fb0800000000000000
+      internalID: -4661056271243485528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_34
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 47
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c72cc951870aef10800000000000000
+      internalID: 2299658811864786880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_35
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 31
+        width: 25
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09bd9d2303efcf620800000000000000
+      internalID: 2809399750537370512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_36
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 0
+        width: 78
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86041e348be85ec20800000000000000
+      internalID: 3235148829399531624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_37
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 49
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 350b51b877fcba9e0800000000000000
+      internalID: -1608964329513308077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_38
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 48
+        width: 24
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 975c56a7f85d5a9e0800000000000000
+      internalID: -1610646479504554631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_39
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 0
+        width: 14
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc2e971b66c657900800000000000000
+      internalID: 681570106936517323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_40
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 16
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff913b501f41e8b20800000000000000
+      internalID: 3138469015739111935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_41
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 0
+        width: 13
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 024283528d7966bb0800000000000000
+      internalID: -4943096586399374304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_42
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 0
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d33e9a33b0c42e90800000000000000
+      internalID: -7051299240540228652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_43
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 15
+        width: 28
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11a7d03e6ac34e530800000000000000
+      internalID: 3883295466171759121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_44
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8131fd637476d8f10800000000000000
+      internalID: 2273586942452896536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_45
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 0
+        width: 32
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa6faf7e8f30ebce0800000000000000
+      internalID: -1387667267604777297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fishtank_decorations_by_Brysia_46
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 4
+        width: 36
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaefb44f3f53a8c70800000000000000
+      internalID: 8974044529381080750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Fishtank_decorations_by_Brysia_0: -3057478326849294310
+      Fishtank_decorations_by_Brysia_1: 6152957068561440300
+      Fishtank_decorations_by_Brysia_10: 2054407152350928832
+      Fishtank_decorations_by_Brysia_11: -2964532372761100196
+      Fishtank_decorations_by_Brysia_12: 5051951214506685341
+      Fishtank_decorations_by_Brysia_13: -5978470051972229563
+      Fishtank_decorations_by_Brysia_14: 4670717303083854340
+      Fishtank_decorations_by_Brysia_15: -4720546455503878671
+      Fishtank_decorations_by_Brysia_16: 2957687382543369924
+      Fishtank_decorations_by_Brysia_17: 8785591716798800623
+      Fishtank_decorations_by_Brysia_18: 7754640593173040306
+      Fishtank_decorations_by_Brysia_19: 5301458841397412715
+      Fishtank_decorations_by_Brysia_2: 1724923756365058154
+      Fishtank_decorations_by_Brysia_20: 4122819765555050456
+      Fishtank_decorations_by_Brysia_21: 1054902417291784062
+      Fishtank_decorations_by_Brysia_22: 3577070966022983566
+      Fishtank_decorations_by_Brysia_23: 6676865979945123525
+      Fishtank_decorations_by_Brysia_24: -1789256872028412764
+      Fishtank_decorations_by_Brysia_25: 5407701016734958454
+      Fishtank_decorations_by_Brysia_26: -9071967774719710433
+      Fishtank_decorations_by_Brysia_27: -151475294640281940
+      Fishtank_decorations_by_Brysia_28: -8870457262862103441
+      Fishtank_decorations_by_Brysia_29: 8365061623511399205
+      Fishtank_decorations_by_Brysia_3: 7630502642904368457
+      Fishtank_decorations_by_Brysia_30: 54217270277978282
+      Fishtank_decorations_by_Brysia_31: 3895064735719185532
+      Fishtank_decorations_by_Brysia_32: -3376664507421381568
+      Fishtank_decorations_by_Brysia_33: -4661056271243485528
+      Fishtank_decorations_by_Brysia_34: 2299658811864786880
+      Fishtank_decorations_by_Brysia_35: 2809399750537370512
+      Fishtank_decorations_by_Brysia_36: 3235148829399531624
+      Fishtank_decorations_by_Brysia_37: -1608964329513308077
+      Fishtank_decorations_by_Brysia_38: -1610646479504554631
+      Fishtank_decorations_by_Brysia_39: 681570106936517323
+      Fishtank_decorations_by_Brysia_4: 481002367687366062
+      Fishtank_decorations_by_Brysia_40: 3138469015739111935
+      Fishtank_decorations_by_Brysia_41: -4943096586399374304
+      Fishtank_decorations_by_Brysia_42: -7051299240540228652
+      Fishtank_decorations_by_Brysia_43: 3883295466171759121
+      Fishtank_decorations_by_Brysia_44: 2273586942452896536
+      Fishtank_decorations_by_Brysia_45: -1387667267604777297
+      Fishtank_decorations_by_Brysia_46: 8974044529381080750
+      Fishtank_decorations_by_Brysia_5: -2475908556290538268
+      Fishtank_decorations_by_Brysia_6: -4518014727429512809
+      Fishtank_decorations_by_Brysia_7: -444667842731902015
+      Fishtank_decorations_by_Brysia_8: 4236080788739822666
+      Fishtank_decorations_by_Brysia_9: 8354752826213354851
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

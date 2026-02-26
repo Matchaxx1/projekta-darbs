@@ -10,6 +10,7 @@ public class SpeletajsDB
     public int Id { get; set; }
     public int Soli { get; set; }
     public int Monetas { get; set; }
+    public int KopejasMonetas { get; set; }
 }
 
 // ===== 2. TABULA: Nopirktās zivis (saistīta ar SpeletajsDB) =====
@@ -86,9 +87,9 @@ public class DatuBaze : MonoBehaviour
 
     // ===== SPĒLĒTĀJA PROGRESS =====
 
-    public void SaglabatProgresu(int soli, int monetas)
+    public void SaglabatProgresu(int soli, int monetas, int kopejasMonetas)
     {
-        db.Update(new SpeletajsDB { Id = 1, Soli = soli, Monetas = monetas });
+        db.Update(new SpeletajsDB { Id = 1, Soli = soli, Monetas = monetas, KopejasMonetas = kopejasMonetas });
     }
 
     public SpeletajsDB IeladetProgresu()
@@ -116,10 +117,10 @@ public class DatuBaze : MonoBehaviour
             .Count();
     }
 
-    // Vai var nopirkt vēl (max 3)
-    public bool VaiVarPirkt(int zivsId)
+    // Vai var nopirkt vēl
+    public bool VaiVarPirkt(int zivsId, int maxDaudzums)
     {
-        return IegutNopirktoSkaitu(zivsId) < 3;
+        return IegutNopirktoSkaitu(zivsId) < maxDaudzums;
     }
 
     // Iegūst visas saglabātās zivis
@@ -163,7 +164,7 @@ public class DatuBaze : MonoBehaviour
         db.Execute("DELETE FROM NopirktaZivsDB WHERE SpeletajaId = 1");
         
         // Atiestatīt soļus un monētas uz 0
-        db.Update(new SpeletajsDB { Id = 1, Soli = 0, Monetas = 0 });
+        db.Update(new SpeletajsDB { Id = 1, Soli = 0, Monetas = 0, KopejasMonetas = 0 });
         
         Debug.Log("Viss progress atiestatīts!");
     }

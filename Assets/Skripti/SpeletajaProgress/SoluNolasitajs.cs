@@ -29,15 +29,21 @@ public class SoluNolasitajs : MonoBehaviour
         }
 
         int pashreizejieSoli = (int)(StepCounter.current.stepCounter.ReadValue() - stepOffset);
-        counterTMP.text = "Soli: " + pashreizejieSoli.ToString();
 
-        // Atjaunina SpeletajaProgress, ja ir jauni soļi
-        if (pashreizejieSoli > ieprieksejieSoli && speletajaProgress != null)
+        // Atjaunina tekstu tikai tad, ja ir mainījies solis (izvairās no GC alloc un TMP mesh rebuild katru kadru)
+        if (pashreizejieSoli != ieprieksejieSoli)
         {
-            int jaunieSoli = pashreizejieSoli - ieprieksejieSoli;
-            int kopaSoli = speletajaProgress.soli + jaunieSoli;
-            
-            speletajaProgress.AtjauninatSolusNoSkaitītaja(kopaSoli);
+            counterTMP.text = "Soli: " + pashreizejieSoli.ToString();
+
+            // Atjaunina SpeletajaProgress, ja ir jauni soļi
+            if (pashreizejieSoli > ieprieksejieSoli && speletajaProgress != null)
+            {
+                int jaunieSoli = pashreizejieSoli - ieprieksejieSoli;
+                int kopaSoli = speletajaProgress.soli + jaunieSoli;
+
+                speletajaProgress.AtjauninatSolusNoSkaitītaja(kopaSoli);
+            }
+
             ieprieksejieSoli = pashreizejieSoli;
         }
     }
@@ -57,9 +63,14 @@ public class SoluNolasitajs : MonoBehaviour
         #if UNITY_ANDROID
             AndroidRuntimePermissions.Permission result = await AndroidRuntimePermissions.RequestPermissionAsync("android.permission.ACTIVITY_RECOGNITION");
             if (result == AndroidRuntimePermissions.Permission.Granted)
+            {
                 DEBUGTEXT.text = "Permissions granted";
+            }
             else
-                DEBUGTEXT.text = "Permission state: " + result;
+            {
+                DEBUGTEXT.text = "Permission denied — closing app";
+                Application.Quit();
+            }
         #endif
     }
 }

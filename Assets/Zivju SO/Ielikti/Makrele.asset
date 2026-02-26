@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30da3dd30e04731459ca4cebea0f9379, type: 3}
+  m_Name: Makrele
+  m_EditorClassIdentifier: 
+  id: 2
+  zivsNosaukums: Makrele
+  zivsSpraits: {fileID: 21300000, guid: dc49fcab883e62a4a9111cfc995f33c2, type: 3}
+  zivsPrefabs: {fileID: 0}
+  lielums: 1.3
+  maxDaudzums: 3

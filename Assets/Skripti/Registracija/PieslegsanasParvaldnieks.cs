@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using System.Collections;
 using System.Threading.Tasks;
 using EasyUI.Popup;
+using Firebase.Extensions;
 
 public class PieslegsanasParvaldnieks : MonoBehaviour
 {
@@ -25,6 +26,11 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
     public TMP_InputField paroleRegistracijaIevade;
     public TMP_InputField paroleApstiprinatRegistracijaIevade;
     public TMP_Text bridinajumsRegistracijaTeksts;
+
+    [Header("Aizmirstā parole")]
+    public TMP_InputField aizmirstaParoleEpastsIevade;
+    public TMP_Text aizmirstaParoleBridinajums;
+    public TMP_Text aizmirstaParoleApstiprinajums;
 
     private void Awake()
     {
@@ -189,5 +195,69 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
                 }
             }
         }
+    }
+
+
+
+    // === AIZMIRSATA PAROLE ===
+
+    public void AizmirstaParolePoga()
+    {
+        string epasts = aizmirstaParoleEpastsIevade != null ? aizmirstaParoleEpastsIevade.text.Trim() : "";
+
+        if (string.IsNullOrEmpty(epasts))
+        {
+            if (aizmirstaParoleBridinajums != null)
+                aizmirstaParoleBridinajums.text = "Lūdzu ievadiet e-pasta adresi!";
+            return;
+        }
+
+        if (aizmirstaParoleBridinajums != null)   aizmirstaParoleBridinajums.text = "";
+        if (aizmirstaParoleApstiprinajums != null) aizmirstaParoleApstiprinajums.text = "";
+
+        aizmirstaParole(epasts);
+    }
+
+    private void aizmirstaParole(string epasts)
+    {
+        auth.SendPasswordResetEmailAsync(epasts).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                string kluda = "K\u013c\u016bda nos\u016bt\u012bšan\u0101!";
+
+                if (task.Exception != null)
+                {
+                    FirebaseException firebaseEx = task.Exception.GetBaseException() as FirebaseException;
+                    if (firebaseEx != null)
+                    {
+                        AuthError kods = (AuthError)firebaseEx.ErrorCode;
+                        switch (kods)
+                        {
+                            case AuthError.InvalidEmail:
+                                kluda = "Nepareiza e-pasta adrese!";
+                                break;
+                            case AuthError.UserNotFound:
+                                kluda = "Konts ar šādu e-pastu neeksistē!";
+                                break;
+                            case AuthError.MissingEmail:
+                                kluda = "Lūdzu ievadiet e-pasta adresi!";
+                                break;
+                        }
+                    }
+                }
+
+                if (aizmirstaParoleBridinajums != null)
+                    aizmirstaParoleBridinajums.text = kluda;
+
+                Debug.LogWarning("SendPasswordResetEmailAsync kļūda: " + task.Exception);
+                return;
+            }
+
+            if (aizmirstaParoleApstiprinajums != null)
+                aizmirstaParoleApstiprinajums.text = "Saite nosūtīta uz " + epasts + "!";
+
+            Debug.Log("Paroles atiestatīšanas e-pasts nosūtīts uz: " + epasts);
+        });
     }
 }

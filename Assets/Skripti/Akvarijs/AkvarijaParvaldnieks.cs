@@ -2,17 +2,22 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using Firebase.Auth;
+using TMPro;
 
 public class AkvarijaParvaldnieks : MonoBehaviour
 {
     [Header("Akvārija iestatījumi")]
     [SerializeField] private RectTransform akvarijs;
+    [Tooltip("Cik liela daļa no akvārija apakšas ir smiltis (0–1). Zivis neparādīsies zemāk par šo robežu.")]
+    [SerializeField] [Range(0f, 1f)] private float smilsuZonaProcenti = 0.15f;
 
     [Header("Zivju iestatījumi")]
     [SerializeField] private GameObject zivsPrefabs;
 
-    [Header("Visas pieejamās zivis (jāpievieno inspectorī)")]
-    [SerializeField] private ZivsSO[] visasZivis;
+    [Tooltip("Veikala parvaldnieks — zivju uzmeklesanai pec ID.")]
+    [SerializeField] private VeikalaParvalditajs veikalaParvalditajs;
+    [SerializeField] private TMP_Text zivjuSkaitaTeksts;
+    [SerializeField] private TMP_Text zivjuSkaitaTeksts2;
 
     private List<GameObject> aktivasZivis = new List<GameObject>();
     private List<int> aktivoZivjuId = new List<int>();
@@ -74,6 +79,9 @@ public class AkvarijaParvaldnieks : MonoBehaviour
             return;
         }
 
+        // Ja objekts tika iznīcīnāts skatīlas mainīšanas laikā — pārtrauc
+        if (this == null) return;
+
         foreach (var zivsDB in saglaboatas)
         {
             ZivsSO zivsSO = AtrastZivsSO(zivsDB.ZivsId);
@@ -90,16 +98,19 @@ public class AkvarijaParvaldnieks : MonoBehaviour
         Debug.Log("Atjaunotas " + saglaboatas.Count + " zivis no datubāzes");
     }
 
-    // Meklē ZivsSO pēc id
+    // Meklē ZivsSO pēc id caur VeikalaParvalditajs
     private ZivsSO AtrastZivsSO(int zivsId)
     {
-        if (visasZivis == null) return null;
-        foreach (var z in visasZivis)
+        if (veikalaParvalditajs == null)
         {
-            if (z != null && z.id == zivsId)
-                return z;
+            veikalaParvalditajs = FindFirstObjectByType<VeikalaParvalditajs>();
+            if (veikalaParvalditajs == null)
+            {
+                Debug.LogError("AkvarijaParvaldnieks: Nav atrasts VeikalaParvalditajs!");
+                return null;
+            }
         }
-        return null;
+        return veikalaParvalditajs.IegutZivsSO(zivsId);
     }
 
     // Nārsto jaunu zivi akvārijā, pamatojoties uz ZivsSO datiem (arī saglabā DB)
@@ -142,15 +153,21 @@ public class AkvarijaParvaldnieks : MonoBehaviour
 
         Vector3[] pasaulesStūri = new Vector3[4];
         akvarijs.GetWorldCorners(pasaulesStūri);
+        float akvarijsAugstums = pasaulesStūri[2].y - pasaulesStūri[0].y;
+        float minY = pasaulesStūri[0].y + akvarijsAugstums * smilsuZonaProcenti;
+
         float randX = Random.Range(pasaulesStūri[0].x, pasaulesStūri[2].x);
-        float randY = Random.Range(pasaulesStūri[0].y, pasaulesStūri[2].y);
+        float randY = Random.Range(minY, pasaulesStūri[2].y);
         Vector3 spawnPozicija = new Vector3(randX, randY, 0f);
 
-        IzveidotZivi(zivsSO, spawnPozicija);
+        Vector2 kustibaMin = new Vector2(pasaulesStūri[0].x, minY);
+        Vector2 kustibaMax = new Vector2(pasaulesStūri[2].x, pasaulesStūri[2].y);
+
+        IzveidotZivi(zivsSO, spawnPozicija, kustibaMin, kustibaMax);
     }
 
     // Pārdod vienu zivi pēc tipa: noņem no akvārija un dzēš no DB
-    public void PardotZivi(int zivsId)
+    public async Task PardotZivi(int zivsId)
     {
         // Meklē pirmo atbilstošo GameObject
         int indekss = -1;
@@ -170,20 +187,27 @@ public class AkvarijaParvaldnieks : MonoBehaviour
 
             aktivasZivis.RemoveAt(indekss);
             aktivoZivjuId.RemoveAt(indekss);
+            AtjaunotZivjuSkaituUI();
         }
 
-        // Dzēš no DB
+        // Dzēš no DB — await, lai UI atjaunojums notiktu tikai pēc dzēšanas
         if (DatuParvaldnieks.Instance != null)
         {
-            DatuParvaldnieks.Instance.DzestVienuZiviPecTipa(zivsId);
+            await DatuParvaldnieks.Instance.DzestVienuZiviPecTipa(zivsId);
         }
 
         Debug.Log("Zivs ar id " + zivsId + " pārdota un noņemta no akvārija");
     }
 
     // Kopīga metode zivs izveidošanai
-    private void IzveidotZivi(ZivsSO zivsSO, Vector3 pozicija)
+    private void IzveidotZivi(ZivsSO zivsSO, Vector3 pozicija, Vector2 kustibsMin, Vector2 kustibsMax)
     {
+        if (zivsSO == null)
+        {
+            Debug.LogWarning("AkvarijaParvaldnieks.IzveidotZivi: zivsSO ir null!");
+            return;
+        }
+
         GameObject prefabs;
         if (zivsSO.zivsPrefabs != null)
             prefabs = zivsSO.zivsPrefabs;
@@ -198,6 +222,10 @@ public class AkvarijaParvaldnieks : MonoBehaviour
 
         GameObject jaunaZivs = Instantiate(prefabs, pozicija, Quaternion.identity, transform);
         jaunaZivs.name = zivsSO.zivsNosaukums;
+
+        // Piemēro izmēru
+        float lielums = zivsSO.lielums > 0f ? zivsSO.lielums : 1f;
+        jaunaZivs.transform.localScale = Vector3.one * lielums;
 
         // SVARĪGI: Uzreiz iestatīt Rigidbody2D, lai zivs nekrīt!
         Rigidbody2D rb = jaunaZivs.GetComponent<Rigidbody2D>();
@@ -217,9 +245,15 @@ public class AkvarijaParvaldnieks : MonoBehaviour
             sr.sprite = zivsSO.zivsSpraits;
         }
 
+        // Inicializē kustību ar akvārija robežām
+        ZivsKustiba kustiba = jaunaZivs.GetComponent<ZivsKustiba>();
+        if (kustiba != null)
+            kustiba.Inicializet(kustibsMin, kustibsMax);
+
         aktivasZivis.Add(jaunaZivs);
         aktivoZivjuId.Add(zivsSO.id);
         Debug.Log("Zivs '" + zivsSO.zivsNosaukums + "' pievienota akvārijam!");
+        AtjaunotZivjuSkaituUI();
     }
 
     // Atgriež aktīvo zivju skaitu akvārijā
@@ -227,6 +261,16 @@ public class AkvarijaParvaldnieks : MonoBehaviour
     {
         aktivasZivis.RemoveAll(z => z == null);
         return aktivasZivis.Count;
+    }
+
+    // Atjaunina zivju skaita tekstu UI
+    private void AtjaunotZivjuSkaituUI()
+    {
+        int max = veikalaParvalditajs != null ? veikalaParvalditajs.MaxKopejaisZivjuSkaits : 0;
+        int skaits = IegutZivjuSkaitu();
+        string teksts = "Akvārijā " + skaits + " / " + max + " zivis";
+        if (zivjuSkaitaTeksts != null)  zivjuSkaitaTeksts.text  = teksts;
+        if (zivjuSkaitaTeksts2 != null) zivjuSkaitaTeksts2.text = teksts;
     }
 
     /// <summary>
@@ -246,6 +290,7 @@ public class AkvarijaParvaldnieks : MonoBehaviour
         // Notīra sarakstus
         aktivasZivis.Clear();
         aktivoZivjuId.Clear();
+        AtjaunotZivjuSkaituUI();
 
         // Dzēš no datubāzes
         if (DatuParvaldnieks.Instance != null)

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Firebase.Auth;
 
 // Vienotais datu parvaldnieks - izvelas starp SQLite (viesis) un Firestore (registrets)
 [DefaultExecutionOrder(-90)]
@@ -16,6 +17,22 @@ public class DatuParvaldnieks : MonoBehaviour
             transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
             LietotajaLoma.IeladetLomu();
+
+            // Sinhronizē lomu ar Firebase Auth stāvokli
+            // Ja Firebase jau ir pieslēgts lietotājs (saglabāta sesija),
+            // automātiski iestata lomu kā reģistrēts neatkarīgi no PlayerPrefs
+            // Sinhronizē tikai ja lietotājs jau bija izvēlējies lomu iepriekš
+            // Ja loma ir Nav — lietotājs vēl nav izvēlējies, nedrīkst pārrakstīt
+            var auth = FirebaseAuth.DefaultInstance;
+            if (auth.CurrentUser != null
+                && LietotajaLoma.PasreizejaLoma != LietotajaLoma.Loma.Nav)
+            {
+                if (!LietotajaLoma.IrRegistrets())
+                {
+                    LietotajaLoma.IestatitKaRegistretu();
+                    Debug.Log("DatuParvaldnieks: Firebase sesija atrasta, loma iestatīta: Registrets");
+                }
+            }
         }
         else
         {
@@ -31,19 +48,19 @@ public class DatuParvaldnieks : MonoBehaviour
 
     // ===== SPĒLĒTĀJA PROGRESS =====
 
-    public async void SaglabatProgresu(int soli, int monetas)
+    public async Task SaglabatProgresu(int soli, int monetas, int kopejasMonetas)
     {
         if (IzmantotMakoni())
         {
-            await MakonaDB.Instance.SaglabatProgresu(soli, monetas);
+            await MakonaDB.Instance.SaglabatProgresu(soli, monetas, kopejasMonetas);
         }
         else if (DatuBaze.Instance != null)
         {
-            DatuBaze.Instance.SaglabatProgresu(soli, monetas);
+            DatuBaze.Instance.SaglabatProgresu(soli, monetas, kopejasMonetas);
         }
     }
 
-    public async Task<(int soli, int monetas)> IeladetProgresu()
+    public async Task<(int soli, int monetas, int kopejasMonetas)> IeladetProgresu()
     {
         if (IzmantotMakoni())
         {
@@ -54,10 +71,10 @@ public class DatuParvaldnieks : MonoBehaviour
         {
             var progress = DatuBaze.Instance.IeladetProgresu();
             if (progress != null)
-                return (progress.Soli, progress.Monetas);
+                return (progress.Soli, progress.Monetas, progress.KopejasMonetas);
         }
 
-        return (0, 0);
+        return (0, 0, 0);
     }
 
     // ===== ZIVJU PIRKUMI =====
@@ -91,17 +108,17 @@ public class DatuParvaldnieks : MonoBehaviour
         return 0;
     }
 
-    // Vai var nopirkt vel (max 3)
-    public async Task<bool> VaiVarPirkt(int zivsId)
+    // Vai var nopirkt vēl
+    public async Task<bool> VaiVarPirkt(int zivsId, int maxDaudzums)
     {
         if (IzmantotMakoni())
         {
-            return await MakonaDB.Instance.VaiVarPirkt(zivsId);
+            return await MakonaDB.Instance.VaiVarPirkt(zivsId, maxDaudzums);
         }
 
         if (DatuBaze.Instance != null)
         {
-            return DatuBaze.Instance.VaiVarPirkt(zivsId);
+            return DatuBaze.Instance.VaiVarPirkt(zivsId, maxDaudzums);
         }
 
         return false;
@@ -137,7 +154,7 @@ public class DatuParvaldnieks : MonoBehaviour
     }
 
     // Dzes vienu zivi pec tipa (piem. pārdošanas gadījumā)
-    public async void DzestVienuZiviPecTipa(int zivsId)
+    public async Task DzestVienuZiviPecTipa(int zivsId)
     {
         if (IzmantotMakoni())
         {
@@ -173,6 +190,7 @@ public class DatuParvaldnieks : MonoBehaviour
 
         int soli = 0;
         int monetas = 0;
+        int kopejasMonetas = 0;
         List<NopirktaZivsDB> zivis = new List<NopirktaZivsDB>();
 
         // Lasa no SQLite (viesa datubāze), ja tā ir atvērta
@@ -183,11 +201,12 @@ public class DatuParvaldnieks : MonoBehaviour
             {
                 soli = progress.Soli;
                 monetas = progress.Monetas;
+                kopejasMonetas = progress.KopejasMonetas;
             }
             zivis = DatuBaze.Instance.IegutVisasZivis();
         }
 
         // Augšupielādē uz Firestore
-        await MakonaDB.Instance.ParnestViesaDatus(soli, monetas, zivis);
+        await MakonaDB.Instance.ParnestViesaDatus(soli, monetas, kopejasMonetas, zivis);
     }
 }

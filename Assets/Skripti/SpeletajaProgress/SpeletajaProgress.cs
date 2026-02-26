@@ -1,23 +1,35 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class SpeletajaProgress : MonoBehaviour
 {
-    public int soliPrieksMonetas = 0;
-    
+    public int soliPrieksMonetas = 50;
+
+    [SerializeField] private float autoSaveIntervalsSekundes = 30f;
 
     private Text soluSkaits;
     public TextMeshProUGUI soluSkaitsTMP;
     private Text monetuSkaits;
     public TextMeshProUGUI monetuSkaitsTMP;
+    private Text monetuSkaits2;
+    public TextMeshProUGUI monetuSkaitsTMP2;
     public Button pievienotSolusPoga;
     public Button pievienotVairakSolusPoga;
-    
 
-    // tikai prieks testa, velak janonem
+    public Image progressJosla;
+    public TMP_Text cikNoSoliemTMP;
+
+
+    // Spēlētāja dati
     public int soli = 0;
     public int monetas = 0;
+    public int kopejasMonetas = 0;
+    private int monetasNoSoliem = 0;
+
+    // Auto-saglabāšanas coroutine reference
+    private Coroutine autoSaveCoroutine;
 
     async void Start()
     {
@@ -27,9 +39,25 @@ public class SpeletajaProgress : MonoBehaviour
             try
             {
                 var progress = await DatuParvaldnieks.Instance.IeladetProgresu();
-                soli = progress.soli;
-                monetas = progress.monetas;
-                Debug.Log("Progress ielādēts no datubāzes: " + soli + " soļi, " + monetas + " monētas");
+                if (this == null) return;
+
+                // Ja soļu skaitītājs jau mainīja vērtības kamēr gaidījām DB —
+                // pārņem tikai ja DB vērtība ir lielāka
+                if (progress.soli > soli)
+                    soli = progress.soli;
+                if (progress.monetas > monetas)
+                    monetas = progress.monetas;
+                if (progress.kopejasMonetas > kopejasMonetas)
+                    kopejasMonetas = progress.kopejasMonetas;
+
+                // Inicializē soļu-monētu izsekotāju
+                monetasNoSoliem = soli / soliPrieksMonetas;
+
+                // Migrācija veciem datiem — kopejasMonetas vismaz kā pašreizējais atlikums
+                if (kopejasMonetas < monetas)
+                    kopejasMonetas = monetas;
+
+                Debug.Log("Progress ielādēts: " + soli + " soļi, " + monetas + " monētas");
             }
             catch (System.Exception e)
             {
@@ -38,10 +66,16 @@ public class SpeletajaProgress : MonoBehaviour
         }
         else
         {
-            Debug.LogError("DatuParvaldnieks.Instance ir null! Pārliecinies, ka DatuParvaldnieks objekts eksistē scēnā.");
+            Debug.LogError("DatuParvaldnieks.Instance ir null!");
         }
 
+        monetasNoSoliem = soli / soliPrieksMonetas;
         AtjaunotUI();
+
+        // Sāk periodisko auto-save
+        if (autoSaveCoroutine != null)
+            StopCoroutine(autoSaveCoroutine);
+        autoSaveCoroutine = StartCoroutine(AutoSaveIntervala());
     }
 
     void OnEnable()
@@ -73,25 +107,26 @@ public class SpeletajaProgress : MonoBehaviour
         {
             pievienotVairakSolusPoga.onClick.RemoveListener(PievienotTukstotsSolus);
         }
+
+        // Aptur auto-save coroutine
+        if (autoSaveCoroutine != null)
+        {
+            StopCoroutine(autoSaveCoroutine);
+        }
     }
-    
+
     public void PievienotSolus()
     {
         Debug.Log("PievienotSolus() izsaukts");
-        
+
         // Pievieno 100 soļus testēšanai
         soli += 100;
-        
-        // Pārveido soļus uz monētām
-        int jaunasMonetas = soli / soliPrieksMonetas;
-        if (jaunasMonetas > monetas) //japarmaina lai sitas paistam stradatu
-        {
-            int iegutasMonetas = jaunasMonetas - monetas;
-            monetas = jaunasMonetas;
-            Debug.Log("Iegūtas " + iegutasMonetas + " monētas!");
-        }
-        
+
+        PievinktMonetasNoSoliem();
+
         SaglabatUnAtjaunotUI();
+        // Saglabā datus UZREIZ aizverot izmaiņas
+        SaglabatProgresu();
     }
 
     /// <summary>
@@ -100,21 +135,16 @@ public class SpeletajaProgress : MonoBehaviour
     public void PievienotTukstotsSolus()
     {
         Debug.Log("PievienotTukstotsSolus() izsaukts");
-        
+
         soli += 1000;
 
-        // Pārveido soļus uz monētām
-        int jaunasMonetas = soli / soliPrieksMonetas;
-        if (jaunasMonetas > monetas)
-        {
-            int iegutasMonetas = jaunasMonetas - monetas;
-            monetas = jaunasMonetas;
-            Debug.Log("Iegūtas " + iegutasMonetas + " monētas!");
-        }
+        PievinktMonetasNoSoliem();
 
         SaglabatUnAtjaunotUI();
+        // Saglabā datus UZREIZ aizverot izmaiņas
+        SaglabatProgresu();
     }
-    
+
     void SaglabatUnAtjaunotUI()
     {
         // Atjaunina tikai UI - datubaze tiek saglabata tikai aizverot speli
@@ -127,59 +157,109 @@ public class SpeletajaProgress : MonoBehaviour
     public void AtjauninatSolusNoSkaitītaja(int jaunieSoli)
     {
         soli = jaunieSoli;
-        
-        // Pārveido soļus uz monētām
-        int jaunasMonetas = soli / soliPrieksMonetas;
-        if (jaunasMonetas > monetas)
+
+        if (PievinktMonetasNoSoliem())
         {
-            monetas = jaunasMonetas;
+            // Saglabā uzreiz, lai jaunās monētas netiktu pazaudētas
+            SaglabatProgresu();
         }
-        
-        // Tikai UI - datubaze tiek saglabata aizverot speli
+
+        // Vienmēr atjauno UI, ne tikai kad mainās monētas
         AtjaunotUI();
     }
 
+    /// <summary>
+    /// Pārbauda un pievieno monētas no soļiem (inkrementāli).
+    /// Atgriež true, ja tika pievienotas jaunas monētas.
+    /// </summary>
+    private bool PievinktMonetasNoSoliem()
+    {
+        int jaunasMonetasNoSoliem = soli / soliPrieksMonetas;
+        int pieaugums = jaunasMonetasNoSoliem - monetasNoSoliem;
+        if (pieaugums > 0)
+        {
+            monetas += pieaugums;
+            kopejasMonetas += pieaugums;
+            monetasNoSoliem = jaunasMonetasNoSoliem;
+            Debug.Log("Iegūtas " + pieaugums + " monētas no soļiem!");
+            return true;
+        }
+        return false;
+    }
+
     /// Saglabā pašreizējos soļus un monētas (SQLite vai Firestore, atkarībā no lomas)
-    void SaglabatProgresu()
+    async void SaglabatProgresu()
     {
         if (DatuParvaldnieks.Instance != null)
         {
-            DatuParvaldnieks.Instance.SaglabatProgresu(soli, monetas);
+            await DatuParvaldnieks.Instance.SaglabatProgresu(soli, monetas, kopejasMonetas);
         }
         else
         {
             Debug.LogError("DatuParvaldnieks.Instance ir null! Nevar saglabāt progresu.");
         }
     }
-    
+
+    /// <summary>
+    /// Periodisks auto-save — saglabā datus katru N sekunžu
+    /// </summary>
+    private IEnumerator AutoSaveIntervala()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(autoSaveIntervalsSekundes);
+
+            if (DatuParvaldnieks.Instance != null)
+            {
+                SaglabatProgresu();
+                Debug.Log("[Auto-Save] Progress saglabāts automātiski: " + soli + " soļi, " + monetas + " monētas");
+            }
+        }
+    }
+
     void AtjaunotUI()
     {
         // Atjaunina solus
-        if (soluSkaits != null)
-            soluSkaits.text = "Soli: " + soli;
-        else if (soluSkaitsTMP != null)
+
+        if (soluSkaitsTMP != null)
+        {
             soluSkaitsTMP.text = "Soli: " + soli;
+        }
 
-        // Atjaunina monētas
-        if (monetuSkaits != null)
-            monetuSkaits.text = "Monētas: " + monetas;
-        else if (monetuSkaitsTMP != null)
-            monetuSkaitsTMP.text = "Monētas: " + monetas;
+        // Atjaunina monētas (TextMeshPro)
+        if (monetuSkaitsTMP != null)
+        {
+            monetuSkaitsTMP.text = "" + monetas;
+        }
 
-        // Force Canvas update lai nodrošinātu, ka izmaiņas ir redzamas uz Android
-        Canvas.ForceUpdateCanvases();
-        
-        Debug.Log("UI atjaunots: " + soli + " soļi, " + monetas + " monētas");
+        // Atjaunina otro monētu skaitītāju (TextMeshPro)
+        if (monetuSkaitsTMP2 != null)
+        {
+            monetuSkaitsTMP2.text = "" + monetas;
+        }
+
+        // Atjaunina progress joslu
+        if (progressJosla != null && soliPrieksMonetas > 0)
+        {
+            int soliKopaSajakot = soli % soliPrieksMonetas;
+            progressJosla.fillAmount = (float)soliKopaSajakot / soliPrieksMonetas;
+        }
+
+        if (cikNoSoliemTMP != null)
+        {
+            int soliKopaSajakot = soli % soliPrieksMonetas;
+            cikNoSoliemTMP.text = soliKopaSajakot.ToString("D2") + "/" + soliPrieksMonetas;
+        }
     }
-    
 
-    // Android neizmanto OnApplicationQuit - izmanto OnApplicationPause
+
+    // Android netiek uzticami pausēts - izmanto OnApplicationPause
     void OnApplicationPause(bool pauze)
     {
-        if(pauze && DatuParvaldnieks.Instance != null)
+        if (pauze && DatuParvaldnieks.Instance != null)
         {
             SaglabatProgresu();
-            Debug.Log("Progress saglabāts (pauze): " + soli + " soļi, " + monetas + " monētas");
+            SaglabatStatistiku("pauze");
         }
     }
 
@@ -189,5 +269,12 @@ public class SpeletajaProgress : MonoBehaviour
         {
             SaglabatProgresu();
         }
+        SaglabatStatistiku("izslēgšana");
+    }
+
+    private void SaglabatStatistiku(string iemesls)
+    {
+        string avots = LietotajaLoma.IrRegistrets() ? "Firestore" : "SQLite";
+        Debug.Log($"[Statistika | {iemesls}] Avots: {avots} | Soļi: {soli} | Monētas: {monetas}");
     }
 }

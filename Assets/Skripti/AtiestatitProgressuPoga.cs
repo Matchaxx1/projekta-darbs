@@ -23,8 +23,9 @@ public class AtiestatitProgressuPoga : MonoBehaviour
             {
                 progress.soli = 0;
                 progress.monetas = 0;
+                progress.kopejasMonetas = 0;
                 if (progress.soluSkaitsTMP != null) progress.soluSkaitsTMP.text = "Soli: 0";
-                if (progress.monetuSkaitsTMP != null) progress.monetuSkaitsTMP.text = "Monētas: 0";
+                if (progress.monetuSkaitsTMP != null) progress.monetuSkaitsTMP.text = "0";
             }
 
             izveleUI.GetComponent<CanvasGroup>().alpha = 1f;

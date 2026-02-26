@@ -66,7 +66,7 @@ public class MakonaDB : MonoBehaviour
 
     // ===== SPĒLĒTĀJA PROGRESS =====
 
-    public async Task SaglabatProgresu(int soli, int monetas)
+    public async Task SaglabatProgresu(int soli, int monetas, int kopejasMonetas)
     {
         var doc = LietotajaDokuments();
         if (doc == null) return;
@@ -74,16 +74,17 @@ public class MakonaDB : MonoBehaviour
         var dati = new Dictionary<string, object>
         {
             { "soli", soli },
-            { "monetas", monetas }
+            { "monetas", monetas },
+            { "kopejasMonetas", kopejasMonetas }
         };
 
         await doc.SetAsync(dati, SetOptions.MergeAll);
         
         // Saglabā lokāli
-        SaglabatProgresuSQLite(soli, monetas);
+        SaglabatProgresuSQLite(soli, monetas, kopejasMonetas);
     }
 
-    public async Task<(int soli, int monetas)> IeladetProgresu()
+    public async Task<(int soli, int monetas, int kopejasMonetas)> IeladetProgresu()
     {
         var doc = LietotajaDokuments();
         if (doc == null) return IeladetProgresuSQLite();
@@ -95,7 +96,8 @@ public class MakonaDB : MonoBehaviour
             {
                 int soli = snapshot.ContainsField("soli") ? snapshot.GetValue<int>("soli") : 0;
                 int monetas = snapshot.ContainsField("monetas") ? snapshot.GetValue<int>("monetas") : 0;
-                return (soli, monetas);
+                int kopejasMonetas = snapshot.ContainsField("kopejasMonetas") ? snapshot.GetValue<int>("kopejasMonetas") : 0;
+                return (soli, monetas, kopejasMonetas);
             }
         }
         catch (System.Exception ex)
@@ -137,10 +139,10 @@ public class MakonaDB : MonoBehaviour
         return snapshot.Count;
     }
 
-    // Vai var nopirkt vel (max 3)
-    public async Task<bool> VaiVarPirkt(int zivsId)
+    // Vai var nopirkt vēl
+    public async Task<bool> VaiVarPirkt(int zivsId, int maxDaudzums)
     {
-        return await IegutNopirktoSkaitu(zivsId) < 3;
+        return await IegutNopirktoSkaitu(zivsId) < maxDaudzums;
     }
 
     // Iegust visas saglabatas zivis
@@ -221,11 +223,11 @@ public class MakonaDB : MonoBehaviour
     }
 
     // Parnes viesa SQLite datus uz Firestore pec registracijas
-    public async Task ParnestViesaDatus(int soli, int monetas, List<NopirktaZivsDB> zivis)
+    public async Task ParnestViesaDatus(int soli, int monetas, int kopejasMonetas, List<NopirktaZivsDB> zivis)
     {
         Debug.Log("Pārnešana: viesa dati -> Firestore...");
 
-        await SaglabatProgresu(soli, monetas);
+        await SaglabatProgresu(soli, monetas, kopejasMonetas);
 
         if (zivis != null && zivis.Count > 0)
         {
@@ -252,7 +254,7 @@ public class MakonaDB : MonoBehaviour
     public async Task AtiestatitVisu()
     {
         await DzestVisasZivis();
-        await SaglabatProgresu(0, 0);
+        await SaglabatProgresu(0, 0, 0);
         PlayerPrefs.DeleteKey(PROGRESS_KEY);
         PlayerPrefs.DeleteKey(FISH_KEY);
         Debug.Log("Viss progress atiestatīts Firestore un lokālā datubāzē!");
@@ -263,26 +265,26 @@ public class MakonaDB : MonoBehaviour
     // Saglabā progresu lokālā datubāzē
     public void IeladetUnSaglabatProgresuSQLite()
     {
-        (int soli, int monetas) = IeladetProgresuSQLite();
-        SaglabatProgresuSQLite(soli, monetas);
+        (int soli, int monetas, int kopejasMonetas) = IeladetProgresuSQLite();
+        SaglabatProgresuSQLite(soli, monetas, kopejasMonetas);
     }
     
-    private void SaglabatProgresuSQLite(int soli, int monetas)
+    private void SaglabatProgresuSQLite(int soli, int monetas, int kopejasMonetas)
     {
-        var dati = new ProgressData { soli = soli, monetas = monetas };
+        var dati = new ProgressData { soli = soli, monetas = monetas, kopejasMonetas = kopejasMonetas };
         string json = JsonUtility.ToJson(dati);
         PlayerPrefs.SetString(PROGRESS_KEY, json);
         PlayerPrefs.Save();
     }
     
-    private (int soli, int monetas) IeladetProgresuSQLite()
+    private (int soli, int monetas, int kopejasMonetas) IeladetProgresuSQLite()
     {
         if (!PlayerPrefs.HasKey(PROGRESS_KEY))
-            return (0, 0);
+            return (0, 0, 0);
         
         string json = PlayerPrefs.GetString(PROGRESS_KEY);
         ProgressData dati = JsonUtility.FromJson<ProgressData>(json);
-        return (dati.soli, dati.monetas);
+        return (dati.soli, dati.monetas, dati.kopejasMonetas);
     }
     
     // Saglabā zivis lokālā datubāzē
@@ -358,6 +360,7 @@ public class MakonaDB : MonoBehaviour
     {
         public int soli;
         public int monetas;
+        public int kopejasMonetas;
     }
     
     [System.Serializable]

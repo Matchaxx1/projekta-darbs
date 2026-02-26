@@ -28,12 +28,17 @@ public class PardosanasParvaldnieks : MonoBehaviour
         atmaksaSuma = pirksanaCena / 2;
 
         zivsSpraits.sprite = zivsSO.zivsSpraits;
+        zivsSpraits.preserveAspect = true;
         zivsNosaukums.text = zivsSO.zivsNosaukums;
         pardosanasMonetas.text = "+" + atmaksaSuma.ToString();
     }
 
     public void PiespiezotPardotPogu()
     {
-        veikalaParvalditajs.PardotZivi(zivsId, atmaksaSuma, gameObject);
+        ApstiprinajumaPopups.RaditPopup(
+            "Pārdot zivi?",
+            "Vai esi pārliecināts, ka gribi pārdot šo zivi?",
+            () => veikalaParvalditajs.PardotZivi(zivsId, atmaksaSuma, gameObject)
+        );
     }
 }
