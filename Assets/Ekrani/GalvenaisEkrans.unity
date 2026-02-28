@@ -6371,7 +6371,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 76.99, y: -543.65}
+  m_AnchoredPosition: {x: 76.98999, y: -543.65}
   m_SizeDelta: {x: 210.96, y: -1087.3}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!212 &917632823
@@ -10514,11 +10514,11 @@ MonoBehaviour:
   - ZivsSO: {fileID: 11400000, guid: 2ab89092fdb5c7b4086981f57274284b, type: 2}
     cena: 15
   - ZivsSO: {fileID: 11400000, guid: 944bf4659d3fadd478d2e4fa34699e6a, type: 2}
-    cena: 20
+    cena: 15
   - ZivsSO: {fileID: 11400000, guid: 3a5ec5d3be8a2064d80c1241af761f25, type: 2}
-    cena: 30
+    cena: 20
   - ZivsSO: {fileID: 11400000, guid: 4a52f85ffd906d444bd7319bd2dd61ff, type: 2}
-    cena: 25
+    cena: 30
   - ZivsSO: {fileID: 11400000, guid: 749d86759e2db2342b10255e20cacd74, type: 2}
     cena: 35
   - ZivsSO: {fileID: 11400000, guid: 9207c6b08b6864044bf6c63a62d26f6f, type: 2}
