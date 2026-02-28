@@ -17,4 +17,4 @@ MonoBehaviour:
   zivsSpraits: {fileID: 21300000, guid: 63cfd8aac2b8dad46867672fef7bff98, type: 3}
   zivsPrefabs: {fileID: 0}
   lielums: 1
-  maxDaudzums: 3
+  maxDaudzums: 5

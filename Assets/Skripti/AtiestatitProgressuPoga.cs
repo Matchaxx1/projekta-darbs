@@ -1,23 +1,31 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// DEBUG: Atiestatīt VISU (zivis, soļus, monētas). Pievieno Button.
-/// </summary>
-
 public class AtiestatitProgressuPoga : MonoBehaviour
 {
+    // Atsauce uz izvēles UI paneli, kas tiek parādīts pēc atiestatīšanas
     public GameObject izveleUI;
+
+    /// <summary>
+    /// Inicializācijas brīdī pievieno klikšķa notikuma apstrādātāju pogai.
+    /// Kad poga tiek nospiesta, tiek izpildīta pilnīga progresa atiestatīšana.
+    /// </summary>
     void Start()
     {
+        // Pievieno klikšķa notikuma apstrādātāju šī objekta Button komponentei
         GetComponent<Button>().onClick.AddListener(() =>
         {
+            // Dzēš visas zivis no akvārija (vizuāli un no datubāzes)
             var akvarium = FindFirstObjectByType<AkvarijaParvaldnieks>();
             if (akvarium != null) akvarium.DzestVisasZivis();
+
+            // Atiestata visu progresu datubāzē (soļi, monētas, zivis)
             DatuParvaldnieks.Instance?.AtiestatitVisu();
-            // Atiestata lietotāja loma arī (noņem viesi/registrets statusu)
+
+            // Atiestata lietotāja lomu (noņem viesa vai reģistrēta lietotāja statusu)
             LietotajaLoma.AtiestatitLomu();
             
+            // Atiestata spēlētāja progresa mainīgos un UI tekstu uz sākotnējām vērtībām
             var progress = FindFirstObjectByType<SpeletajaProgress>();
             if (progress != null)
             {
@@ -28,11 +36,11 @@ public class AtiestatitProgressuPoga : MonoBehaviour
                 if (progress.monetuSkaitsTMP != null) progress.monetuSkaitsTMP.text = "0";
             }
 
+            // Parāda izvēles UI paneli, lai lietotājs varētu atkārtoti izvēlēties lomu
             izveleUI.GetComponent<CanvasGroup>().alpha = 1f;
             izveleUI.GetComponent<CanvasGroup>().blocksRaycasts = true;
 
-            
-            Debug.Log("DEBUG: Viss atiestatīts!");
+            Debug.Log("Viss atiestatīts!");
         });
     }
 }

@@ -5,26 +5,30 @@ using UnityEngine.UI;
 public class VeikalaParvalditajs : MonoBehaviour
 {
     [Header("Pirksanas cilne")]
-    [SerializeField] private List<PrecuSaraksts> precuSaraksts;
-    [SerializeField] private PrecesVieta[] precesVieta;
+    [SerializeField] private List<PrecuSaraksts> precuSaraksts;  // Visu pieejamo zivju precu saraksts
+    [SerializeField] private PrecesVieta[] precesVieta;           // UI kartīšu vietas pirkšanas cilnē
 
     [Header("Pardosanas cilne")]
-    [SerializeField] private Transform pardosanasKonteiners;
-    [SerializeField] private GameObject pardosanasVietaPrefabs;
+    [SerializeField] private Transform pardosanasKonteiners;      // Konteiners, kurā dinamiski tiek pievienotas pārdošanas kartītes
+    [SerializeField] private GameObject pardosanasVietaPrefabs;    // Pārdošanas kartītes prefabs
 
     [Header("Kopigi")]
-    [SerializeField] private SpeletajaProgress speletajaProgress;
-    [SerializeField] private AkvarijaParvaldnieks akvarijaParvaldnieks;
+    [SerializeField] private SpeletajaProgress speletajaProgress;      // Spēlētāja progresa atsauce monētu atskaitīšanai
+    [SerializeField] private AkvarijaParvaldnieks akvarijaParvaldnieks; // Akvārija pārvaldnieks zivju pievienošanai/noņemšanai
 
     [Header("Kopējs zivju limits")]
     [Tooltip("Maksimālais kopējais zivju skaits akvārijā.")]
-    [SerializeField] private int maxKopejaisZivjuSkaits = 10;
+    [SerializeField] private int maxKopejaisZivjuSkaits = 10;  // Maksimālais zivju skaits akvārijā
     [Tooltip("Panelis, kas tiek rādīts, kad akvārijs ir pilns.")]
-    [SerializeField] private GameObject pardotZivisPanelis;
+    [SerializeField] private GameObject pardotZivisPanelis;      // UI panelis, kas tiek parādīts, kad akvārijs ir pilns
+    // Publiskais īpašums maksimālā zivju skaita nolasīšanai no citiem skriptiem
     public int MaxKopejaisZivjuSkaits => maxKopejaisZivjuSkaits;
+    /// <summary>
+    /// Inicializācijas laikā piešķir unikālu ID katrai zivij.
+    /// </summary>
     private void Awake()
     {
-        // Pieskir ID katrai zivij pec pozicijas saraksta (1, 2, 3...)
+        // Piešķir ID katrai zivij pēc pozīcijas sarakstā
         for (int i = 0; i < precuSaraksts.Count; i++)
         {
             if (precuSaraksts[i].ZivsSO != null)
@@ -32,19 +36,28 @@ public class VeikalaParvalditajs : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Aizpilda precu kartītes un atver pirkšanas cilni.
+    /// </summary>
     private void Start()
     {
         pievienotVeikalam();
         AtvertVeikaluPirkt();
     }
 
-    // ===== PIRKSANAS CILNE =====
 
+    /// <summary>
+    /// Atver pirkšanas cilni, paneļu pārslēgšanu veic UIPārvaldnieks.
+    /// </summary>
     public void AtvertVeikaluPirkt()
     {
-        // Panelu parades kontrole ir VeikalaUIParvaldnieks
+        // Paneļu parādīšanas kontrole notiek UIPārvaldnieks skriptā
     }
 
+    /// <summary>
+    /// Aizpilda veikala pirkšanas kartītes ar datiem no precu saraksta.
+    /// Katrai precei iestata attēlu, nosaukumu, cenu un zivs ID.
+    /// </summary>
     public void pievienotVeikalam()
     {
         for (int i = 0; i < precuSaraksts.Count && i < precesVieta.Length; i++)
@@ -70,6 +83,9 @@ public class VeikalaParvalditajs : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Mēģina nopirkt zivi, pārbauda pieejamību, monētu pietiekamību un izpilda pirkšanas darbību ar datubāzes saglabāšanu un akvārija atjaunošanu.
+    /// </summary>
     public async void meginatPirkt(ZivsSO zivsSO, int cena, int zivsId)
     {
         if (zivsSO == null) return;
@@ -85,11 +101,13 @@ public class VeikalaParvalditajs : MonoBehaviour
             return;
         }
 
+        // Pārbauda, vai spēlētājs vēl var pirkt šī tipa zivi (nav sasniegts limits)
         bool varPirkt = await DatuParvaldnieks.Instance.VaiVarPirkt(zivsId, zivsSO.maxDaudzums);
         if (this == null) return;
         if (!varPirkt)
         {
             Debug.Log("Nevar nopirkt vairāk no šī tipa zivs! Limits: " + zivsSO.maxDaudzums);
+            // Ja limits sasniegts, atjauno kartītes, lai attēlo "izpirkts" stāvokli
             AtjaunotVeikalaKartes();
             return;
         }
@@ -100,8 +118,10 @@ public class VeikalaParvalditajs : MonoBehaviour
             return;
         }
 
+        // Pārbauda, vai spēlētājam ir pietiekami daudz monētu pirkšanai
         if (speletajaProgress.monetas >= cena)
         {
+            // Atskaita monētas no spēlētāja atlikuma
             speletajaProgress.monetas -= cena;
 
             if (speletajaProgress.monetuSkaitsTMP != null)
@@ -110,14 +130,16 @@ public class VeikalaParvalditajs : MonoBehaviour
             if (speletajaProgress.monetuSkaitsTMP2 != null)
                 speletajaProgress.monetuSkaitsTMP2.text = speletajaProgress.monetas.ToString();
 
+            // Saglabā atjaunoto progresu datubāzē
             DatuParvaldnieks.Instance?.SaglabatProgresu(speletajaProgress.soli, speletajaProgress.monetas, speletajaProgress.kopejasMonetas);
 
+            // Iestata zivs ID un pievieno to akvārijam
             zivsSO.id = zivsId;
 
             if (akvarijaParvaldnieks != null)
                 akvarijaParvaldnieks.IeliktZivi(zivsSO);
 
-            // Parades "pilns akvārijs" paneli, ja tagad ir sasniegts limits
+            // Parāda "pilns akvārijs" paneli, ja tagad ir sasniegts zivju limits
             if (akvarijaParvaldnieks != null && pardotZivisPanelis != null)
             {
                 int pasuSkaits = akvarijaParvaldnieks.IegutZivjuSkaitu();
@@ -125,24 +147,29 @@ public class VeikalaParvalditajs : MonoBehaviour
                     pardotZivisPanelis.SetActive(true);
             }
 
+            // Atjauno veikala kartītes, lai atspoguļotu jauno nopirkto skaitu
             AtjaunotVeikalaKartes();
         }
         else
         {
+            // Ja monētu nepietiek, izvada paziņojumu konsolē
             Debug.Log("Nav pietiekami daudz monetu! Vajag: " + cena + ", ir: " + speletajaProgress.monetas);
         }
     }
 
-    // ===== PARDOSANAS CILNE =====
 
-    // Izsauc VeikalaUIParvaldnieks (vai tieši) - notira un pielada kartites
+    /// <summary>
+    /// Notīra vecas kartītes un ielādē aktuālās no datubāzes.
+    /// </summary>
     public void AtvertVeikaluPardot()
     {
         TiritPardosanasKartes();
         IeladesPardosanasKartes();
     }
 
-    // Notira visas pardosanas kartites no konteiner
+    /// <summary>
+    /// Notīra visas iepriekšējās pārdošanas kartītes no konteinerā.
+    /// </summary>
     private void TiritPardosanasKartes()
     {
         if (pardosanasKonteiners == null) return;
@@ -150,7 +177,9 @@ public class VeikalaParvalditajs : MonoBehaviour
             Destroy(berns.gameObject);
     }
 
-    // Ielade visas nopirktas zivis no DB un izveido kartites
+    /// <summary>
+    /// Ielādē visas nopirktās zivis no datubāzes un izveido pārdošanas kartītes katrai zivij.
+    /// </summary>
     private async void IeladesPardosanasKartes()
     {
         if (DatuParvaldnieks.Instance == null)
@@ -205,7 +234,9 @@ public class VeikalaParvalditajs : MonoBehaviour
         }
     }
 
-    // Izveido jaunu pardosanas kartiti un pievieno konteinera
+    /// <summary>
+    /// Izveido jaunu pārdošanas kartīti un pievieno to konteineram.
+    /// </summary>
     private void PievienotPardosanasKarti(int zivsId, ZivsSO zivsSO, int pirksanaCena)
     {
         if (pardosanasVietaPrefabs == null || pardosanasKonteiners == null) return;
@@ -223,10 +254,12 @@ public class VeikalaParvalditajs : MonoBehaviour
         }
     }
 
-    // Pardod zivi: pievieno monetas, nonem no akvarija, iznicina kartiti
+    /// <summary>
+    /// Pievieno monētas spēlētājam, noņem zivi no akvārija, dzēš no datubāzes un iznīcina pārdošanas kartīti.
+    /// </summary>
     public async void PardotZivi(int zivsId, int atmaksaSuma, GameObject karte)
     {
-        // heti disable card to prevent double-sell while DB operation runs
+        // Uzreiz deaktivē kartīti, lai novērstu dubultu pārdošanu, kamēr DB operācija darbojas
         if (karte != null)
         {
             Button b = karte.GetComponent<Button>();
@@ -234,7 +267,7 @@ public class VeikalaParvalditajs : MonoBehaviour
             karte.SetActive(false);
         }
 
-        // Pievieno monetas
+        // Pievieno pārdošanas monētas spēlētāja atlikumam un kopējai statistikai
         if (speletajaProgress != null)
         {
             speletajaProgress.monetas += atmaksaSuma;
@@ -249,15 +282,15 @@ public class VeikalaParvalditajs : MonoBehaviour
             DatuParvaldnieks.Instance?.SaglabatProgresu(speletajaProgress.soli, speletajaProgress.monetas, speletajaProgress.kopejasMonetas);
         }
 
-        // Nonem zivi no akvarija un DB — await, lai DB dzēšana pabeigtos pirms UI atjaunojuma
+        // Noņem zivi no akvārija un dzēš no datubāzes un gaida, līdz operācija beidzas
         if (akvarijaParvaldnieks != null)
             await akvarijaParvaldnieks.PardotZivi(zivsId);
 
-        // Iznicina kartiti no UI
+        // Iznīcina pārdošanas kartīti no UI
         if (karte != null)
             Destroy(karte);
 
-        // Paslep "pilns akvārijs" paneli, ja tas vairs nav pilns
+        // Paslēpj "pilns akvārijs" paneli, ja akvārijs vairs nav pilns
         if (akvarijaParvaldnieks != null && pardotZivisPanelis != null)
         {
             int pasuSkaits = akvarijaParvaldnieks.IegutZivjuSkaitu();
@@ -265,16 +298,15 @@ public class VeikalaParvalditajs : MonoBehaviour
                 pardotZivisPanelis.SetActive(false);
         }
 
-        // Atjaunina pirksanas cilnes kartes (owned skaits / sold out stavoklis)
+        // Atjauno pirkšanas cilnes kartītes (nopirkto skaitu un izpirkts stāvokli)
         AtjaunotVeikalaKartes();
 
         Debug.Log("[Pardosana] Pardota zivs ID=" + zivsId + " | Atmaksa=" + atmaksaSuma);
     }
 
-    // ===== PALIGMETODE =====
 
     /// <summary>
-    /// Atjaunina visas veikala kartes (owned skaitu un sold out stavokli).
+    /// Atjauno visas veikala pirkšanas kartītes, nopirkto skaitu un izpirkts stāvokli.
     /// </summary>
     public void AtjaunotVeikalaKartes()
     {
@@ -285,7 +317,10 @@ public class VeikalaParvalditajs : MonoBehaviour
         }
     }
 
-    // Atrod ZivsSO pec ID — izmanto AkvarijaParvaldnieks
+    /// <summary>
+    /// Meklē ZivsSO datu objektu pēc zivs ID.
+    /// Vispirms meklē pēc indeksa (primāri), tad pēc ZivsSO.id lauka (rezervē).
+    /// </summary>
     public ZivsSO IegutZivsSO(int zivsId)
     {
         int indekss = zivsId - 1;
@@ -298,21 +333,23 @@ public class VeikalaParvalditajs : MonoBehaviour
         return null;
     }
 
-    // Atrod preci pec zivs ID
-    // DB vienmēr glabā pozīciju + 1 (pieskirts Awake), tāpēc indekss ir primārais veids
+    /// <summary>
+    /// Meklē preci pēc zivs ID. Primāri izmanto indeksu (ID - 1), jo ID tiek piešķirti Awake() metodē sākot no 1.
+    /// Ja indeksa meklēšana nespēj atrast, pārbauda ZivsSO.id lauku.
+    /// </summary>
     private PrecuSaraksts AtrastPreciPecId(int zivsId)
     {
-        // Primārais: indekss (DB vienmēr glabā pozīcija+1)
+        // Primārais meklēšanas veids, pēc indeksa (DB glabā pozīcija + 1)
         int indekss = zivsId - 1;
         if (indekss >= 0 && indekss < precuSaraksts.Count && precuSaraksts[indekss].ZivsSO != null)
             return precuSaraksts[indekss];
 
-        // Rezerves: mekle pec ZivsSO.id (gadijumam, ja ID nesaskan ar poziciju)
+        // Rezerves meklēšanas veids, pārbauda ZivsSO.id lauku (gadījumam, ja ID nesakrīt ar pozīciju)
         foreach (var p in precuSaraksts)
             if (p.ZivsSO != null && p.ZivsSO.id == zivsId)
                 return p;
 
-        // Nekas nav atrasts
+        // Nekas nav atrasts, tadizdrukā pieejamos ID diagnostikai
         string pieejamieId = "";
         foreach (var p in precuSaraksts)
             if (p.ZivsSO != null) pieejamieId += p.ZivsSO.zivsNosaukums + "(id=" + p.ZivsSO.id + ") ";
@@ -321,9 +358,13 @@ public class VeikalaParvalditajs : MonoBehaviour
     }
 }
 
+/// <summary>
+/// Preces datu klase, satur atsauci uz zivs ScriptableObject un tās cenu.
+/// Tiek izmantota veikala precu sarakstā.
+/// </summary>
 [System.Serializable]
 public class PrecuSaraksts
 {
-    public ZivsSO ZivsSO;
-    public int cena;
+    public ZivsSO ZivsSO; // Atsauce uz zivs datu objektu
+    public int cena;      // Zivs pirkšanas cena monētās
 }

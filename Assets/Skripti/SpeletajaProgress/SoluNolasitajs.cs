@@ -4,17 +4,22 @@ using TMPro;
 
 public class SoluNolasitajs : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI counterTMP, DEBUGTEXT;
-    [SerializeField] SpeletajaProgress speletajaProgress;
+    [SerializeField] TextMeshProUGUI counterTMP, DEBUGTEXT;  // UI teksti soļu skaita un atkļūdošanas informācijas parādīšanai
+    [SerializeField] SpeletajaProgress speletajaProgress;    // Atsauce uz spēlētāja progresa skriptu
 
-    long stepOffset;
-    int ieprieksejieSoli = 0;
+    long stepOffset;             // Sākotnējā pedometra vērtība sesijas sākumā (lai rēķinātu tikai jaunos soļus)
+    int ieprieksejieSoli = 0;    // Iepriekšējais soļu skaits, novērš nevajadzīgus UI atjaunojumus
 
+    /// <summary>
+    /// Inicializē pedometru, pieprasa atļauju un ieslēdz soļu skaitītāju.
+    /// </summary>
     void Start()
     {
         if (Application.isEditor) { return; }
 
+        // Pieprasa Android atļauju soļu nolasīšanai
         RequestPermission();
+        // Ieslēdz soļu skaitītāja ierīci
         InputSystem.EnableDevice(StepCounter.current);
     }
 
@@ -30,7 +35,7 @@ public class SoluNolasitajs : MonoBehaviour
 
         int pashreizejieSoli = (int)(StepCounter.current.stepCounter.ReadValue() - stepOffset);
 
-        // Atjaunina tekstu tikai tad, ja ir mainījies solis (izvairās no GC alloc un TMP mesh rebuild katru kadru)
+        // Atjaunina tekstu tikai tad, ja ir mainījies solis
         if (pashreizejieSoli != ieprieksejieSoli)
         {
             counterTMP.text = "Soli: " + pashreizejieSoli.ToString();
@@ -48,12 +53,18 @@ public class SoluNolasitajs : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Apstrādā lietotnes pauzēšanu un atsākšanu.
+    /// Kad lietotne atgriežas no fona režīma, atiestata pedometra nobīdi, lai nākamajā Update() tā tiktu pārrēķināta no jaunās bāzvērtības.
+    /// Progresa saglabāšana notiek SpeletajaProgress skriptā.
+    /// </summary>
     void OnApplicationPause(bool pauseStatus)
     {
-        // Saglabašana notiek SpeletajaProgress.OnApplicationPause
-        // Te neko nedaram, lai nesutitu dubultu pieprasijumu uz datubazi
+        if (!pauseStatus)
+        {
+            stepOffset = 0;
+        }
     }
-
 
     async void RequestPermission()
     {

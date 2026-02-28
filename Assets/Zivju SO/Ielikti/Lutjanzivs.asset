@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30da3dd30e04731459ca4cebea0f9379, type: 3}
+  m_Name: Lutjanzivs
+  m_EditorClassIdentifier: 
+  id: 20
+  zivsNosaukums: "Lutj\u0101nzivs"
+  zivsSpraits: {fileID: 21300000, guid: 3d0e8a774e23a1641bb08e503827d682, type: 3}
+  zivsPrefabs: {fileID: 0}
+  lielums: 2.3
+  maxDaudzums: 3

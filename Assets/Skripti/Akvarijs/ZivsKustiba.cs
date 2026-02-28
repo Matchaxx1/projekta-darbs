@@ -1,36 +1,36 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(SpriteRenderer))]
 public class ZivsKustiba : MonoBehaviour
 {
     [Header("Ātrums")]
-    [SerializeField] private float minAtrums = 0.6f;
-    [SerializeField] private float maxAtrums = 1.4f;
-    [SerializeField] private float atrumaMaina = 0.4f;
+    [SerializeField] private float minAtrums = 0.6f;     // Minimālais kustības ātrums
+    [SerializeField] private float maxAtrums = 1.4f;     // Maksimālais kustības ātrums
+    [SerializeField] private float atrumaMaina = 0.4f;   // Ātruma maiņas koeficients
 
     [Header("Klīšana")]
-    [SerializeField] private float maxPagr = 55f;
-    [SerializeField] private float pagrJitter = 180f;
+    [SerializeField] private float maxPagr = 55f;        // Maksimālais pagrieziena ātrums (grādi sekundē)
+    [SerializeField] private float pagrJitter = 180f;    // Nejausinma amp. pagrieziena izmaiņām
 
     [Header("Šūpošanās")]
-    [SerializeField] private float suposanosAplituda = 0.18f;
-    [SerializeField] private float suposanosAtrums = 1.8f;
+    [SerializeField] private float suposanasAmplituda = 0.18f;  // Vertikālās šūpošanās amplitūda
+    [SerializeField] private float suposanasAtrums = 1.8f;     // Vertikālās šūpošanās frekvence
 
-    // --- privātie lauki ---
     private Rigidbody2D rb;
     private SpriteRenderer sr;
 
-    private Vector2 robezaMin;
-    private Vector2 robezaMax;
-    private bool inicializets = false;
+    private Vector2 robezaMin;         // Akvārija apakšējā kreisais stūris (kustības robeža)
+    private Vector2 robezaMax;         // Akvārija augšējais labais stūris (kustības robeža)
+    private bool inicializets = false; // Vai robežas ir ieslēgtas
 
-    private float virziensLenkis;
-    private float pagriezienaAtrums;
-    private float pasreizejaisAtrums;
-    private float merkaAtrums;
-    private float suposanasNobide;
+    private float virziensLenkis;      // Pašreizējais kustības virziena leņķis grādos
+    private float pagriezienaAtrums;   // Pašreizējais pagrieziena ātrums
+    private float pasreizejaisAtrums;  // Pašreizējais kustības ātrums
+    private float merkaAtrums;         // Mērķa ātrums, uz kuru zivs pakāpeniski virzās
+    private float suposanasNobide;     // Nejauša šūpošanās nobide, lai visas zivis nešūpotos sinhroni
 
+    /// <summary>
+    /// Inicializē fizikas un spraita komponentes, ieslēdz bezgravitācijas režīmu un ģenerē nejaušu šūpošanās nobidi katrai zivij.
+    /// </summary>
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -46,8 +46,10 @@ public class ZivsKustiba : MonoBehaviour
     }
 
     /// <summary>
-    /// Izsauc AkvarijaParvaldnieks pēc spawna — iestata akvārija robežas.
+    /// Izsauc AkvārijaPārvaldnieks pēc zivs radīšanas un iestata akvārija robežas, kurās zivs drīkst kustēties. Bez šī izsaukuma zivs nekustēsies.
     /// </summary>
+    /// <param name="min">Akvārija apakšējais kreisais stūris</param>
+    /// <param name="max">Akvārija augšējais labais stūris</param>
     public void Inicializet(Vector2 min, Vector2 max)
     {
         robezaMin = min;
@@ -60,6 +62,9 @@ public class ZivsKustiba : MonoBehaviour
         merkaAtrums = pasreizejaisAtrums;
     }
 
+    /// <summary>
+    /// Galvenais kustības aprēķins, kas tiek izpildīts katru fizikas kadru.
+    /// </summary>
     void FixedUpdate()
     {
         if (!inicializets || rb == null) return;
@@ -67,22 +72,22 @@ public class ZivsKustiba : MonoBehaviour
         float dt = Time.fixedDeltaTime;
         Vector2 pozicija = rb.position;
 
-        // ── 1. Wander ─────────────────────────────────────────────────────────
+        // 1. Nejauši maina pagrieziena ātrumu, kas pakāpeniski groza virzienu
         pagriezienaAtrums += Random.Range(-pagrJitter, pagrJitter) * dt;
         pagriezienaAtrums = Mathf.Clamp(pagriezienaAtrums, -maxPagr, maxPagr);
         virziensLenkis += pagriezienaAtrums * dt;
 
-        // ── 2. Ātruma maiga maiņa ─────────────────────────────────────────────
+        // 2. Ik pa laikam izvēlas jaunu mērķa ātrumu
         if (Random.value < 0.005f)
             merkaAtrums = Random.Range(minAtrums, maxAtrums);
         pasreizejaisAtrums = Mathf.Lerp(pasreizejaisAtrums, merkaAtrums, atrumaMaina * dt);
 
-        // ── 3. Aprēķina kustības vektoru ─────────────────────────────────────
+        // 3. Aprēķina kustības vektoru no leņķa un ātruma
         float lenkisRad = virziensLenkis * Mathf.Deg2Rad;
         float atrX = Mathf.Cos(lenkisRad) * pasreizejaisAtrums;
         float atrY = Mathf.Sin(lenkisRad) * pasreizejaisAtrums;
 
-        // ── 4. Sienas atbangošana — apvērš konkrēto ass komponentu ───────────
+        // 4. Ātruma komponentu padara negatīvu, kad zivs sasniedz robežu
         bool atsitasPretSienu = false;
 
         if (pozicija.x <= robezaMin.x && atrX < 0f)
@@ -111,7 +116,7 @@ public class ZivsKustiba : MonoBehaviour
             atsitasPretSienu = true;
         }
 
-        // Ja atbangoja — atjaunina leņķi no jaunā vektora un novieto uz robežas
+        // Ja zivs atlēca no sienas, pārrēķina virziena leņķi no jaunā ātruma vektora
         if (atsitasPretSienu)
         {
             virziensLenkis = Mathf.Atan2(atrY, atrX) * Mathf.Rad2Deg;
@@ -119,13 +124,13 @@ public class ZivsKustiba : MonoBehaviour
             rb.position = pozicija;
         }
 
-        // ── 5. Šūpošanās ─────────────────────────────────────────────────────
-        float supojums = Mathf.Sin(Time.time * suposanosAtrums + suposanasNobide) * suposanosAplituda;
+        // 5. Pievieno zivs šūpošanos
+        float supojums = Mathf.Sin(Time.time * suposanasAtrums + suposanasNobide) * suposanasAmplituda;
 
-        // ── 6. Pielieto ātrumu ────────────────────────────────────────────────
+        // 6. Pielieto galejīgo ātrumu Rigidbody2D komponentei
         rb.linearVelocity = new Vector2(atrX, atrY + supojums);
 
-        // ── 7. Sprīta apvēršana ───────────────────────────────────────────────
+        // 7. Apvērš spraitu horizontāli atbilstoši kustības virzienam
         if (sr != null && Mathf.Abs(atrX) > 0.05f)
             sr.flipX = atrX < 0f;
     }

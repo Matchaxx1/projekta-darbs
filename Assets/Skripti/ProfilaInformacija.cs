@@ -5,27 +5,39 @@ using Firebase.Auth;
 public class ProfilaInformacija : MonoBehaviour
 {
     [Header("Profila UI Elementi")]
-    public TMP_Text lietotajvardsTeksts;
-    public TMP_Text lietotajaIDTeksts;
-    public TMP_Text lietotajaLomaTeksts;
-    public GameObject izrakstitiesPoga;
+    public TMP_Text lietotajvardsTeksts;     // Teksta lauks lietotājvārda attēlošanai
+    public TMP_Text lietotajaIDTeksts;       // Teksta lauks lietotāja unikālā ID attēlošanai
+    public TMP_Text lietotajaLomaTeksts;     // Teksta lauks lietotāja lomas attēlošanai
+    public GameObject izrakstitiesPoga;       // Izrakstīšanās pogas objekts (redzams tikai reģistrētiem)
 
-    private FirebaseAuth auth;
-    private FirebaseUser lietotajs;
+    // Firebase autentifikācijas atsauces
+    private FirebaseAuth auth;               // Firebase Auth instance
+    private FirebaseUser lietotajs;          // Pašreizējais Firebase lietotājs
 
+    /// <summary>
+    /// Inicializē Firebase Auth instanci.
+    /// </summary>
     private void Awake()
     {
         auth = FirebaseAuth.DefaultInstance;
     }
 
+    /// <summary>
+    /// Start brīdī atjauno profila informāciju un ieraksta lomu žurnālā.
+    /// </summary>
     private void Start()
     {
-        // Pārbauda vai loma ir ielādēta
+        // Pārbauda, vai loma ir ielādēta no PlayerPrefs
         Debug.Log("ProfilaInformacija Start: Lietotāja loma = " + LietotajaLoma.PasreizejaLoma);
         
         AtjaunotProfiluInfo();
     }
 
+    /// <summary>
+    /// Galvenā profila informācijas atjaunošanas metode.
+    /// Iegūst pašreizējo Firebase lietotāju un attēlo visus profila datus UI elementos.
+    /// Ja lietotājs nav pieslēdzies (viesis), parāda atbilstošus noklusējuma tekstus.
+    /// </summary>
     public void AtjaunotProfiluInfo()
     {
         // Iegūst pašreizējo Firebase lietotāju
@@ -47,7 +59,7 @@ public class ProfilaInformacija : MonoBehaviour
             Debug.LogWarning("FirebaseAuth nav inicializēts!");
         }
 
-        // Ja lietotājs ir pieslēdzies caur Firebase
+        // Ja lietotājs ir pieslēdzies caur Firebase, tad parāda reālos datus
         if (lietotajs != null)
         {
             // Parāda lietotājvārdu
@@ -59,7 +71,7 @@ public class ProfilaInformacija : MonoBehaviour
                     : lietotajvards;
             }
 
-            // Parāda lietotāja ID
+            // Parāda lietotāja unikālo Firebase ID
             if (lietotajaIDTeksts != null)
             {
                 lietotajaIDTeksts.text = "ID: " + lietotajs.UserId;
@@ -67,7 +79,7 @@ public class ProfilaInformacija : MonoBehaviour
         }
         else
         {
-            // Ja nav Firebase lietotāja (piemēram, viesis)
+            
             if (lietotajvardsTeksts != null)
             {
                 lietotajvardsTeksts.text = "Viesis";
@@ -75,11 +87,11 @@ public class ProfilaInformacija : MonoBehaviour
 
             if (lietotajaIDTeksts != null)
             {
-                lietotajaIDTeksts.text = "ID: Nav pieejams";
+                lietotajaIDTeksts.text = "";
             }
         }
 
-        // Parāda lietotāja lomu
+        // Parāda lietotāja lomu teksta formātā
         if (lietotajaLomaTeksts != null)
         {
             string lomasNosaukums = "";
@@ -98,25 +110,30 @@ public class ProfilaInformacija : MonoBehaviour
             lietotajaLomaTeksts.text = "Loma: " + lomasNosaukums;
         }
 
-        // Parāda vai paslēpj izrakstīšanās pogu
+        // Pārvalda izrakstīšanās pogas redzamību
         ParvaldītIzrakstīšanāsPogu();
     }
 
-    // Parāda izrakstīšanās pogu tikai reģistrētiem lietotājiem
+    /// <summary>
+    /// Poga ir redzama tikai reģistrētiem lietotājiem, jo viesiem nav no kā izrakstīties.
+    /// </summary>
     private void ParvaldītIzrakstīšanāsPogu()
     {
         if (izrakstitiesPoga != null)
         {
-            // Poga redzama tikai reģistrētiem lietotājiem
+            // Izrakstīšanās poga ir redzama tikai reģistrētiem lietotājiem
             bool irRegistrets = LietotajaLoma.IrRegistrets();
             izrakstitiesPoga.SetActive(irRegistrets);
         }
     }
 
-    // Izrakstīšanās funkcija
+    /// <summary>
+    /// Saglabā spēlētāja progresu, izrakstās no Firebase Auth un atiestata lietotāja lomu.
+    /// Pēc izrakstīšanās novirza uz galveno ekrānu.
+    /// </summary>
     public async void Izrakstities()
     {
-        // Saglabāt progresu pirms izrakstīšanās
+        // Saglabā progresu pirms izrakstīšanās, lai dati netiktu pazaudēti
         SpeletajaProgress progress = FindFirstObjectByType<SpeletajaProgress>();
         if (progress != null && DatuParvaldnieks.Instance != null)
         {
@@ -124,20 +141,37 @@ public class ProfilaInformacija : MonoBehaviour
             Debug.Log("Progress saglabāts pirms izrakstīšanās");
         }
 
+        // Izrakstās no Firebase autentifikācijas sistēmas
         if (auth != null)
         {
-            auth.SignOut();
-            Debug.Log("Lietotājs izrakstījies no Firebase");
+            try
+            {
+                auth.SignOut();
+                Debug.Log("Lietotājs izrakstījies no Firebase");
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning("SignOut izsauca kļūdu: " + ex);
+            }
         }
 
-        // Atiestatīt lietotāja lomu
+        // Atiestata lietotāja lomu
         LietotajaLoma.AtiestatitLomu();
+
+        // Notīrām jebkādus lokālos viesu datus, lai pēc izrakstīšanās viesis sāktu no nulles
+        if (DatuBaze.Instance != null)
+        {
+            DatuBaze.Instance.AtiestatitVisu();
+            Debug.Log("Lokālā SQLite datubāze iztīrīta pēc izrakstīšanās");
+        }
         
-        // Atgriezties uz izvēles ekrānu vai sākuma ekrānu
+        // Novirza uz galveno ekrānu, kur lietotājs varēs izvēlēties lomu no jauna
         UnityEngine.SceneManagement.SceneManager.LoadScene("GalvenaisEkrans");
     }
 
-    // Šo metodi var izsaukt, kad tiek atvērts profils
+    /// <summary>
+    /// Kad profila panelis kļūst aktīvs, automātiski atjauno profila informāciju.
+    /// </summary>
     private void OnEnable()
     {
         AtjaunotProfiluInfo();

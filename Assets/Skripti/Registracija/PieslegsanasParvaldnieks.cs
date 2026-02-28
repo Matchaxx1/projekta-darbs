@@ -5,35 +5,38 @@ using TMPro;
 using Unity.VisualScripting;
 using System.Collections;
 using System.Threading.Tasks;
-using EasyUI.Popup;
 using Firebase.Extensions;
+using EasyPopupSystem;
 
 public class PieslegsanasParvaldnieks : MonoBehaviour
 {
-    public DependencyStatus dependencyStatus;
-    public FirebaseAuth auth;
-    public FirebaseUser lietotajs;
+    public DependencyStatus dependencyStatus; // Firebase atkarību stāvoklis
+    public FirebaseAuth auth;                   // Firebase autentifikācijas instance
+    public FirebaseUser lietotajs;              // Pašreizējais Firebase lietotājs
 
     [Header("Pieslegsanas")]
-    public TMP_InputField epastsPieslegsanasIevade;
-    public TMP_InputField parolePieslegsanasIevade;
-    public TMP_Text bridinajumsPieslegsanasTeksts;
-    public TMP_Text apstiprinatPieslegsanasTeksts;
+    public TMP_InputField epastsPieslegsanasIevade;      // E-pasta ievadlauks pieslēgšanās formā
+    public TMP_InputField parolePieslegsanasIevade;      // Paroles ievadlauks pieslēgšanās formā
+    public TMP_Text bridinajumsPieslegsanasTeksts;       // Brīdinājuma teksts pieslēgšanās kļūdām
+    public TMP_Text apstiprinatPieslegsanasTeksts;       // Apstiprinājuma teksts veiksmīgai pieslēgšanās gadījumā
 
     [Header("Reģistrācija")]
-    public TMP_InputField lietotājvārdsRegistracijaIevade;
-    public TMP_InputField epastsRegistracijaIevade;
-    public TMP_InputField paroleRegistracijaIevade;
-    public TMP_InputField paroleApstiprinatRegistracijaIevade;
-    public TMP_Text bridinajumsRegistracijaTeksts;
+    public TMP_InputField lietotājvārdsRegistracijaIevade;       // Lietotājvārda ievadlauks reģistrācijā
+    public TMP_InputField epastsRegistracijaIevade;              // E-pasta ievadlauks reģistrācijā
+    public TMP_InputField paroleRegistracijaIevade;              // Paroles ievadlauks reģistrācijā
+    public TMP_InputField paroleApstiprinatRegistracijaIevade;   // Paroles apstiprināšanas ievadlauks
+    public TMP_Text bridinajumsRegistracijaTeksts;               // Brīdinājuma teksts reģistrācijas kļūdām
 
     [Header("Aizmirstā parole")]
-    public TMP_InputField aizmirstaParoleEpastsIevade;
-    public TMP_Text aizmirstaParoleBridinajums;
-    public TMP_Text aizmirstaParoleApstiprinajums;
+    public TMP_InputField aizmirstaParoleEpastsIevade;   // E-pasta ievadlauks paroles atiestatīšanai
 
+
+    /// <summary>
+    /// Inicializācijā pārbauda Firebase atkarības un, ja tās ir pieejamas, izsauc Firebase autentifikācijas uzstādīšanu.
+    /// </summary>
     private void Awake()
     {
+        // Pārbauda, vai visas Firebase atkarības ir pieejamas
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             dependencyStatus = task.Result;
@@ -48,85 +51,125 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Inicializē Firebase autentifikācijas instanci.
+    /// </summary>
     private void UzsaktFirebase()
     {
         Debug.Log("Setting up firebase auth");
         auth = FirebaseAuth.DefaultInstance;
     }
 
+    /// <summary>
+    /// Izsauc pieslēgšanās korutīnu ar ievadīto e-pastu un paroli.
+    /// </summary>
     public void PieslegtiesPoga()
     {
         StartCoroutine(Pieslegties(epastsPieslegsanasIevade.text, parolePieslegsanasIevade.text));
     }
 
+    /// <summary>
+    /// Izsauc reģistrācijas korutīnu ar ievadīto e-pastu, paroli un lietotājvārdu.
+    /// </summary>
     public void RegistracijasPoga()
     {
         StartCoroutine(Registreties(epastsRegistracijaIevade.text, paroleRegistracijaIevade.text, lietotājvārdsRegistracijaIevade.text));
     }
 
-    private IEnumerator Pieslegties(string _epasts, string _parole)
+    /// <summary>
+    /// Pieslēgšanās korutīna mēģina pieslēgties ar Firebase Auth.
+    /// Kļūdas gadījumā attēlo paziņojumu caur EasyPopup.
+    /// Veiksmē iestata lietotāja lomu un pāriet uz galveno ekrānu.
+    /// </summary>
+    private IEnumerator Pieslegties(string epasts, string parole)
     {
-        Task<AuthResult> PieslegtiesTask = auth.SignInWithEmailAndPasswordAsync(_epasts, _parole);
+        // Sūta pieslēgšanās pieprasījumu Firebase servisam
+        Task<AuthResult> PieslegtiesTask = auth.SignInWithEmailAndPasswordAsync(epasts, parole);
+        // Gaida, kamēr Firebase operācija pabeidzas
         yield return new WaitUntil(predicate: () => PieslegtiesTask.IsCompleted);
 
         if (PieslegtiesTask.Exception != null)
         {
-            Debug.LogWarning(message: $"Failed to register task with {PieslegtiesTask.Exception}");
+            // Izšķir Firebase kļūdas kodu no izņēmuma
+            Debug.LogWarning(message: $"Nesanāca reģistrēties {PieslegtiesTask.Exception}");
             FirebaseException firebaseEx = PieslegtiesTask.Exception.GetBaseException() as FirebaseException;
             AuthError kludasKods = (AuthError)firebaseEx.ErrorCode;
 
+            // Attēlo atbilstošu kļūdas paziņojumu atkarībā no kļūdas veida
             string kluda = "Nesanāca pieslēgties!";
             switch (kludasKods)
             {
                 case AuthError.MissingEmail:
-                    Popup.Show ("<color=red>Kļūda </color>", "Nav ievadīts e-pasts!");
+                    kluda = "Nav ievadīts e-pasts!";
                     break;
                 case AuthError.MissingPassword:
-                    Popup.Show ("<color=red>Kļūda </color>", "Nav ievadīta parole!");
+                    kluda = "Nav ievadīta parole!";
                     break;
                 case AuthError.WrongPassword:
-                    Popup.Show ("<color=red>Kļūda </color>", "Nepareiza parole!");
+                    kluda = "Nepareiza parole!";
                     break;
                 case AuthError.InvalidEmail:
-                    Popup.Show ("<color=red>Kļūda </color>", "Nepareiza e-pasta adrese!");
+                    kluda = "Nepareiza e-pasta adrese!";
                     break;
                 case AuthError.UserNotFound:
-                    Popup.Show ("<color=red>Kļūda </color>", "Konts neeksistē!");
+                    kluda = "Konts neeksistē!";
                     break;
             }
-            bridinajumsPieslegsanasTeksts.text = kluda;
+            EasyPopup.Create("Kļūda", kluda, "PopupError");
         }
-        else
-        {
+            // Saglabā lietotāja atsauci
             lietotajs = PieslegtiesTask.Result.User;
             Debug.LogFormat("Lietotājs veiksmīgi pieslēdzies: {0} ({1})", lietotajs.DisplayName, lietotajs.Email);
-            bridinajumsPieslegsanasTeksts.text = "";
-            apstiprinatPieslegsanasTeksts.text = "Pieslēdzies";
 
-            // Iestata lomu ka registrets lietotajs (jo jau ir Firebase lietotājs)
+            // Iestata lomu kā reģistrēts lietotājs (jo jau ir Firebase lietotājs)
             LietotajaLoma.IestatitKaRegistretu();
             Debug.Log("Loma iestatīta: Registrets (pēc pieslēgšanās)");
+
+            // Pāriet uz galveno ekrānu
             UnityEngine.SceneManagement.SceneManager.LoadScene("GalvenaisEkrans");
-        }
     }
 
-    private IEnumerator Registreties(string _epasts, string _parole, string _lietotajvards)
+    /// <summary>
+    /// Validē ievadītos datus un reizē izveido jaunu Firebase lietotāju. Ja lietotājs iepriekš bija viesis, pārnes lokālos SQLite datus uz Firestore mākoni.un pēc migrācijas lokālo datubāzi iztīra, lai pazaudētās liekais saturs netiktu atkārtoti izmests.
+    /// </summary>
+    private IEnumerator Registreties(string epasts, string parole, string lietotajvards)
     {
-        if (_lietotajvards == "")
+        // Pārbauda, vai visi ievadlauki ir aizpildīti un parole ir pietiekami gara
+        if (lietotajvards == "")
         {
+            EasyPopup.Create("Kļūda", "Nav ievadīts lietotājvārds!", "PopupError");
             bridinajumsRegistracijaTeksts.text = "Nav ievadīts lietotājvārds!";
+        }
+        else if (epasts == "")
+        {
+            EasyPopup.Create("Kļūda", "Nav ievadīts e-pasts!", "PopupError");
+            bridinajumsRegistracijaTeksts.text = "Nav ievadīts e-pasts!";
+        }
+        else if (parole == "")
+        {
+            EasyPopup.Create("Kļūda", "Nav ievadīta parole!", "PopupError");
+            bridinajumsRegistracijaTeksts.text = "Nav ievadīta parole!";
+        }
+        else if (parole.Length < 6)
+        {
+            EasyPopup.Create("Kļūda", "Parolei jābūt vismaz 6 simbolu garai!", "PopupError");
+            bridinajumsRegistracijaTeksts.text = "Parole ir par īsu!";
         }
         else if (paroleRegistracijaIevade.text != paroleApstiprinatRegistracijaIevade.text)
         {
+            EasyPopup.Create("Kļūda", "Paroles nav vienādas!", "PopupError");
             bridinajumsRegistracijaTeksts.text = "Paroles nav vienādas!";
         }
         else
         {
-            Task<AuthResult> RegistracijaTask = auth.CreateUserWithEmailAndPasswordAsync(_epasts, _parole);
+            // Visi lauki validīti, sūta reģistrācijas pieprasījumu Firebase
+            Task<AuthResult> RegistracijaTask = auth.CreateUserWithEmailAndPasswordAsync(epasts, parole);
+            // Gaida, līdz Firebase operācija pabeidzas
             yield return new WaitUntil(predicate: () => RegistracijaTask.IsCompleted);
 
             if (RegistracijaTask.Exception != null)
             {
+                // Izšķir kļūdas kodu un attēlo atbilstošu paziņojumu
                 Debug.LogWarning(message: $"Reģistrācija nesanāca ar {RegistracijaTask.Exception}");
                 FirebaseException firebaseEx = RegistracijaTask.Exception.GetBaseException() as FirebaseException;
                 AuthError kludasKods = (AuthError)firebaseEx.ErrorCode;
@@ -135,48 +178,55 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
                 switch (kludasKods)
                 {
                     case AuthError.MissingEmail:
-                        Popup.Show ("<color=red>Kļūda </color>", "Nav ievadīts e-pasts!");
+                        kluda = "Nav ievadīts e-pasts!";
                         break;
                     case AuthError.MissingPassword:
-                        Popup.Show ("<color=red>Kļūda </color>", "Nav ievadīta parole!");
+                        kluda = "Nav ievadīta parole!";
                         break;
                     case AuthError.WeakPassword:
-                        Popup.Show ("<color=red>Kļūda </color>", "Parolei jābūt vismaz 6 simbolu garai!");
+                        kluda = "Parolei jābūt vismaz 6 simbolu garai!";
                         break;
                     case AuthError.EmailAlreadyInUse:
-                        Popup.Show ("<color=red>Kļūda </color>", "E-pastu jau kāds izmanto!");
+                        kluda = "E-pastu jau kāds izmanto!";
+                        break;
+                    case AuthError.InvalidEmail:
+                        kluda = "Nav ievadīta pareiza e-pasta adrese!";
                         break;
                 }
-                bridinajumsRegistracijaTeksts.text = kluda;
+                EasyPopup.Create("Kļūda", kluda, "PopupError");
             }
             else
             {
+                // Veiksmīga reģistrācija, saglabā lietotāja atsauci
                 lietotajs = RegistracijaTask.Result.User;
 
                 if (lietotajs != null)
                 {
-                    UserProfile profils = new UserProfile{DisplayName = _lietotajvards};
+                    // Iestata lietotājvārdu Firebase profilā
+                    UserProfile profils = new UserProfile{DisplayName = lietotajvards};
 
+                    // Gaida profila atjaunināšanas operāciju
                     Task ProfilsTask = lietotajs.UpdateUserProfileAsync(profils);
                     yield return new WaitUntil(predicate: () => ProfilsTask.IsCompleted);
 
                     if (ProfilsTask.Exception != null)
                     {
-                        Debug.LogWarning(message: $"Nesanāca reģistrēt task ar {ProfilsTask.Exception}");
+                        // Profila atjaunināšana neizdevās
+                        Debug.LogWarning(message: $"Nesanāca reģistrēties {ProfilsTask.Exception}");
                         FirebaseException firebaseEx = ProfilsTask.Exception.GetBaseException() as FirebaseException;
                         AuthError kludasKods = (AuthError)firebaseEx.ErrorCode;
-                        bridinajumsRegistracijaTeksts.text = "Username Set Failed!";
+                        
                     }
                     else
                     {
-                        // Saglaba vai bijis viesis PIRMS lomas mainisanas
+                        // Saglabā informāciju, vai lietotājs iepriekš bija viesis
                         bool bijViesis = LietotajaLoma.IrViesis();
 
-                        // Iestata lomu ka registrets lietotajs (jo tikai reģistrētie var registrēties)
+                        // Iestata lomu kā reģistrēts lietotājs
                         LietotajaLoma.IestatitKaRegistretu();
                         Debug.Log("Loma iestatīta: Registrets (pēc reģistrācijas)");
 
-                        // Ja bijis viesis - parnes SQLite datus uz Firestore
+                        // Ja bijis viesis, pārnes lokālos SQLite datus uz Firestore mākoni
                         if (bijViesis && DatuParvaldnieks.Instance != null)
                         {
                             Debug.Log("Viesis reģistrējas - pārnesam lokālos datus uz Firestore...");
@@ -184,9 +234,28 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
                             yield return new WaitUntil(() => migracijasTask.IsCompleted);
 
                             if (migracijasTask.Exception != null)
+                            {
                                 Debug.LogWarning("Datu pārnešana neizdevās: " + migracijasTask.Exception);
+                            }
                             else
+                            {
                                 Debug.Log("Viesa dati veiksmīgi pārnesti uz Firestore!");
+                                // sinhronizē no mākoņa uz prefsi, lai datus var redzēt uzreiz
+                                if (DatuParvaldnieks.Instance != null)
+                                {
+                                    var _task = DatuParvaldnieks.Instance.IegutVisasZivis();
+                                    yield return new WaitUntil(() => _task.IsCompleted);
+                                }
+                                // Pēc migrācijas izdzēš tikai lokālās datu struktūras (sqlite).
+                                if (DatuBaze.Instance != null)
+                                {
+                                    DatuBaze.Instance.AtiestatitVisu();
+                                    // arī tieši izdzēš SQLite failu, ja pastāv
+                                    DatuBaze.Instance?.IzdzestDbFailu();
+                                }
+                                // neatkārto lomas datu dzēšanu; PlayerPrefs paliek, lai saglabātu reģistrētā lietotāja lomu
+                                Debug.Log("Lokālā SQLite datubāze iztīrīta pēc migrācijas.");
+                            }
                         }
 
                         bridinajumsRegistracijaTeksts.text = "";
@@ -198,33 +267,38 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
     }
 
 
-
-    // === AIZMIRSATA PAROLE ===
-
+    /// <summary>
+    /// Validē e-pasta lauku un izsauc paroles atiestatīšanas metodi.
+    /// </summary>
     public void AizmirstaParolePoga()
     {
+        // Nolasīta un notīra e-pasta ievadlauku
         string epasts = aizmirstaParoleEpastsIevade != null ? aizmirstaParoleEpastsIevade.text.Trim() : "";
 
+        // Pārbauda, vai e-pasts ir ievadīts
         if (string.IsNullOrEmpty(epasts))
         {
-            if (aizmirstaParoleBridinajums != null)
-                aizmirstaParoleBridinajums.text = "Lūdzu ievadiet e-pasta adresi!";
+            EasyPopup.Create("Kļūda", "Lūdzu ievadiet e-pasta adresi!", "PopupError");
             return;
         }
 
-        if (aizmirstaParoleBridinajums != null)   aizmirstaParoleBridinajums.text = "";
-        if (aizmirstaParoleApstiprinajums != null) aizmirstaParoleApstiprinajums.text = "";
-
+        // Izsauc paroles atiestatīšanas metodi
         aizmirstaParole(epasts);
     }
 
+    /// <summary>
+    /// Nosūta paroles atiestatīšanas e-pastu caur Firebase Auth.
+    /// Apstrādā kļūdas un attēlo rezultātu ar EasyPopup popupiem.
+    /// </summary>
     private void aizmirstaParole(string epasts)
     {
+        // Sūta paroles atiestatīšanas pieprasījumu Firebase servisam
         auth.SendPasswordResetEmailAsync(epasts).ContinueWithOnMainThread(task =>
         {
             if (task.IsFaulted || task.IsCanceled)
             {
-                string kluda = "K\u013c\u016bda nos\u016bt\u012bšan\u0101!";
+                // Nosūtīšana neizdevās, nosaka kļūdas veidu
+                string kluda = "Kļūda nosūtīšanā!";
 
                 if (task.Exception != null)
                 {
@@ -247,16 +321,14 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
                     }
                 }
 
-                if (aizmirstaParoleBridinajums != null)
-                    aizmirstaParoleBridinajums.text = kluda;
-
+                // Attēlo kļūdu ar EasyPopup
+                EasyPopup.Create("Kļūda", kluda, "PopupError");
                 Debug.LogWarning("SendPasswordResetEmailAsync kļūda: " + task.Exception);
                 return;
             }
 
-            if (aizmirstaParoleApstiprinajums != null)
-                aizmirstaParoleApstiprinajums.text = "Saite nosūtīta uz " + epasts + "!";
-
+            // Veiksmīgi nosūtīts, attēlo apstiprinājuma paziņojumu
+            EasyPopup.Create("Sanāca!", "Paroles atiestatīšanas saite nosūtīta uz " + epasts + "!", "PopupSuccess");
             Debug.Log("Paroles atiestatīšanas e-pasts nosūtīts uz: " + epasts);
         });
     }
