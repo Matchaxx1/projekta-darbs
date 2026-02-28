@@ -25,7 +25,7 @@ Instalēšana uz telefona:</br>
 Ja projekts tiek atvērts Unity vidē obligāti jāielādē un jāimportē Firebase Dependencies.
 
 </br>
-Dokumentācija atrodas šeit ar nosaukumu dokumentacija.docx
+Dokumentācija atrodas šeit ar nosaukumu dokumentacija.docx, lietotāja ceļvedis ar nosaukumu Lietotaja ceļvedis.docx.
 </br></br>
 
 Projekta pirmkods ir publicēts saskaņā ar MIT licenci, kas ļauj to brīvi izmantot, modificēt un izplatīt, saglabājot autora norādi.
