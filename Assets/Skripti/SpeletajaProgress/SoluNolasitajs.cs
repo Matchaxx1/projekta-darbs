@@ -4,15 +4,17 @@ using TMPro;
 
 public class SoluNolasitajs : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI counterTMP, DEBUGTEXT;  // UI teksti soļu skaita un atkļūdošanas informācijas parādīšanai
+    [SerializeField] TextMeshProUGUI counterTMP, debugTeksts;  // UI teksti soļu skaita un atkļūdošanas informācijas parādīšanai
     [SerializeField] SpeletajaProgress speletajaProgress;    // Atsauce uz spēlētāja progresa skriptu
 
-    long stepOffset;             // Sākotnējā pedometra vērtība sesijas sākumā (lai rēķinātu tikai jaunos soļus)
+    // Sākotnējā pedometra vērtība sesijas sākumā (lai rēķinātu tikai jaunos soļus).
+    long soluNobide;
     int ieprieksejieSoli = 0;    // Iepriekšējais soļu skaits, novērš nevajadzīgus UI atjaunojumus
 
     /// <summary>
     /// Inicializē pedometru, pieprasa atļauju un ieslēdz soļu skaitītāju.
     /// </summary>
+
     void Start()
     {
         if (Application.isEditor) { return; }
@@ -27,13 +29,15 @@ public class SoluNolasitajs : MonoBehaviour
     {
         if (Application.isEditor) { return; }
 
-        if (stepOffset == 0)
+        if (soluNobide == 0)
         {
-            stepOffset = StepCounter.current.stepCounter.ReadValue();
+            // Aprēķina bāzi kā sensora pašreizējā vērtība mīnus saglabātie soļi;
+            long currentSensor = StepCounter.current.stepCounter.ReadValue();
             ieprieksejieSoli = speletajaProgress != null ? speletajaProgress.soli : 0;
+            soluNobide = currentSensor - ieprieksejieSoli;
         }
 
-        int pashreizejieSoli = (int)(StepCounter.current.stepCounter.ReadValue() - stepOffset);
+        int pashreizejieSoli = (int)(StepCounter.current.stepCounter.ReadValue() - soluNobide);
 
         // Atjaunina tekstu tikai tad, ja ir mainījies solis
         if (pashreizejieSoli != ieprieksejieSoli)
@@ -47,39 +51,33 @@ public class SoluNolasitajs : MonoBehaviour
                 int kopaSoli = speletajaProgress.soli + jaunieSoli;
 
                 speletajaProgress.AtjauninatSolusNoSkaitītaja(kopaSoli);
+                // Atjauno nobīdi uzreiz, lai nākamā rinda rēķinātu no jaunā progresā
+                long currentSensor = StepCounter.current.stepCounter.ReadValue();
+                soluNobide = currentSensor - kopaSoli;
             }
 
             ieprieksejieSoli = pashreizejieSoli;
         }
     }
 
-    /// <summary>
-    /// Apstrādā lietotnes pauzēšanu un atsākšanu.
-    /// Kad lietotne atgriežas no fona režīma, atiestata pedometra nobīdi, lai nākamajā Update() tā tiktu pārrēķināta no jaunās bāzvērtības.
-    /// Progresa saglabāšana notiek SpeletajaProgress skriptā.
-    /// </summary>
     void OnApplicationPause(bool pauseStatus)
     {
-        if (!pauseStatus)
-        {
-            stepOffset = 0;
-        }
     }
 
     async void RequestPermission()
     {
         #if UNITY_EDITOR
-            DEBUGTEXT.text = "Editor Platform";
+            debugTeksts.text = "Atvērts datorā";
         #endif
         #if UNITY_ANDROID
             AndroidRuntimePermissions.Permission result = await AndroidRuntimePermissions.RequestPermissionAsync("android.permission.ACTIVITY_RECOGNITION");
             if (result == AndroidRuntimePermissions.Permission.Granted)
             {
-                DEBUGTEXT.text = "Permissions granted";
+                debugTeksts.text = "Dota atļauja!";
             }
             else
             {
-                DEBUGTEXT.text = "Permission denied — closing app";
+                debugTeksts.text = "Nav dota atļauja, iziet ārā no spēles!";
                 Application.Quit();
             }
         #endif
