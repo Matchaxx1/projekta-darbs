@@ -4,66 +4,123 @@ using TMPro;
 
 public class SoluNolasitajs : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI counterTMP, debugTeksts;  // UI teksti soļu skaita un atkļūdošanas informācijas parādīšanai
-    [SerializeField] SpeletajaProgress speletajaProgress;    // Atsauce uz spēlētāja progresa skriptu
+    [SerializeField] TextMeshProUGUI counterTMP, debugTeksts;
+    [SerializeField] SpeletajaProgress speletajaProgress;
 
-    // Sākotnējā pedometra vērtība sesijas sākumā (lai rēķinātu tikai jaunos soļus).
-    long soluNobide;
-    int ieprieksejieSoli = 0;    // Iepriekšējais soļu skaits, novērš nevajadzīgus UI atjaunojumus
+    long soluNobide;          // Tas cik soļi bija uzkrāti pirms lietotnes palaišanas
+    int ieprieksejieSoli = 0;  // Iepriekšējais soļu skaits, lai izvairītos no liekiem UI atjauninājumiem
+    bool uzsakts = false;      // Vai skaitītājs jau uzsākts
 
     /// <summary>
-    /// Inicializē pedometru, pieprasa atļauju un ieslēdz soļu skaitītāju.
+    /// Pieprasa soļu lasīšanas atļauju un ieslēdz soļu skaitītāja sensoru.
     /// </summary>
-
     void Start()
     {
         if (Application.isEditor) { return; }
 
-        // Pieprasa Android atļauju soļu nolasīšanai
         RequestPermission();
-        // Ieslēdz soļu skaitītāja ierīci
         InputSystem.EnableDevice(StepCounter.current);
     }
 
+    /// <summary>
+    /// Katru kadru nolasa sensora vērtību, aprēķina jaunos soļus un atjauno UI un progresu.
+    /// Pirmajā kadrā uzsāk nobīdi un pieskaita soļus, kas staigāti fonā vai aizvērtā lietotnē.
+    /// </summary>
     void Update()
     {
         if (Application.isEditor) { return; }
+        if (StepCounter.current == null) { return; }
 
-        if (soluNobide == 0)
+        long sensors = StepCounter.current.stepCounter.ReadValue();
+        if (sensors <= 0) { return; }
+
+        if (!uzsakts)
         {
-            // Aprēķina bāzi kā sensora pašreizējā vērtība mīnus saglabātie soļi;
-            long currentSensor = StepCounter.current.stepCounter.ReadValue();
             ieprieksejieSoli = speletajaProgress != null ? speletajaProgress.soli : 0;
-            soluNobide = currentSensor - ieprieksejieSoli;
-        }
 
-        int pashreizejieSoli = (int)(StepCounter.current.stepCounter.ReadValue() - soluNobide);
-
-        // Atjaunina tekstu tikai tad, ja ir mainījies solis
-        if (pashreizejieSoli != ieprieksejieSoli)
-        {
-            counterTMP.text = "Soli: " + pashreizejieSoli.ToString();
-
-            // Atjaunina SpeletajaProgress, ja ir jauni soļi
-            if (pashreizejieSoli > ieprieksejieSoli && speletajaProgress != null)
+            // Pieskaita soļus, kas staigāti fonā/aizvērtā lietotnē
+            long vecaisSensors = long.Parse(PlayerPrefs.GetString("SensorsVertiba", "0"));
+            if (vecaisSensors > 0 && sensors >= vecaisSensors)
             {
-                int jaunieSoli = pashreizejieSoli - ieprieksejieSoli;
-                int kopaSoli = speletajaProgress.soli + jaunieSoli;
-
-                speletajaProgress.AtjauninatSolusNoSkaitītaja(kopaSoli);
-                // Atjauno nobīdi uzreiz, lai nākamā rinda rēķinātu no jaunā progresā
-                long currentSensor = StepCounter.current.stepCounter.ReadValue();
-                soluNobide = currentSensor - kopaSoli;
+                int fonaSoli = (int)(sensors - vecaisSensors);
+                if (fonaSoli > 0 && speletajaProgress != null)
+                {
+                    ieprieksejieSoli += fonaSoli;
+                    speletajaProgress.AtjauninatSolusNoSkaitītaja(ieprieksejieSoli);
+                }
             }
 
-            ieprieksejieSoli = pashreizejieSoli;
+            soluNobide = sensors - ieprieksejieSoli;
+            uzsakts = true;
+            SaglabatSensoru(sensors);
+        }
+
+        int pasreizejieSoli = (int)(sensors - soluNobide);
+
+        if (pasreizejieSoli != ieprieksejieSoli) // Atjaunina tikai ja solis mainījies
+        {
+            counterTMP.text = "Soli: " + pasreizejieSoli;
+
+            if (pasreizejieSoli > ieprieksejieSoli && speletajaProgress != null)
+            {
+                int kopaSoli = speletajaProgress.soli + (pasreizejieSoli - ieprieksejieSoli);
+                speletajaProgress.AtjauninatSolusNoSkaitītaja(kopaSoli);
+
+                // Pārrēķina nobīdi pēc progresa atjaunināšanas
+                sensors = StepCounter.current.stepCounter.ReadValue();
+                soluNobide = sensors - kopaSoli;
+            }
+
+            ieprieksejieSoli = pasreizejieSoli;
+            SaglabatSensoru(sensors);
         }
     }
 
+    /// <summary>
+    /// Aizejot fonā saglabā sensora vērtību. Atgriežoties atiestatās inicializācija, lai Update pārrēķinātu soļus, kas staigāti fona laikā.
+    /// </summary>
     void OnApplicationPause(bool pauseStatus)
     {
+        if (Application.isEditor || StepCounter.current == null) { return; }
+
+        if (pauseStatus)
+        {
+            // Aizejot fonā — saglabā sensora vērtību
+            long sensors = StepCounter.current.stepCounter.ReadValue();
+            if (sensors > 0) SaglabatSensoru(sensors);
+        }
+        else
+        {
+            // Atgriežoties no fona — ļauj Update pārrēķināt fona soļus
+            InputSystem.EnableDevice(StepCounter.current);
+            uzsakts = false;
+        }
     }
 
+    /// <summary>
+    /// Saglabā pēdējo sensora vērtību pirms lietotnes aizvēršanas.
+    /// </summary>
+    void OnApplicationQuit()
+    {
+        if (Application.isEditor || StepCounter.current == null) { return; }
+
+        // Saglabā sensora vērtību pirms lietotnes aizvēršanas
+        long sensors = StepCounter.current.stepCounter.ReadValue();
+        if (sensors > 0) SaglabatSensoru(sensors);
+    }
+
+    /// <summary>
+    /// Saglabā sensora vērtību PlayerPrefs, lai nākamajā sesijā varētu aprēķināt fona soļus.
+    /// </summary>
+    void SaglabatSensoru(long vertiba)
+    {
+        PlayerPrefs.SetString("SensorsVertiba", vertiba.ToString());
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Pieprasa Android atļauju soļu lasīšanai. Ja atļauja tiek atteikta, aizver lietotni.
+    /// </summary>
     async void RequestPermission()
     {
         #if UNITY_EDITOR
