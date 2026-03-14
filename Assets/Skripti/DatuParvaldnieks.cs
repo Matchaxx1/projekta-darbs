@@ -6,7 +6,7 @@ using Firebase.Auth;
 /// <summary>
 /// Vienotais datu pārvaldnieks, nodrošina vienotu interfeisu datu operācijām neatkarīgi no datu avota.
 /// </summary>
-[DefaultExecutionOrder(-90)]
+[DefaultExecutionOrder(-110)]
 public class DatuParvaldnieks : MonoBehaviour
 {
     public static DatuParvaldnieks Instance { get; private set; }
@@ -25,16 +25,29 @@ public class DatuParvaldnieks : MonoBehaviour
             LietotajaLoma.IeladetLomu();
 
             // Sinhronizē lomu ar Firebase Auth stāvokli:
-            // Ja Firebase jau ir pieslēgts lietotājs (saglabāta sesija), automātiski iestata lomu kā reģistrēts.
-            // Sinhronizē tikai, ja lietotājs jau bija izvēlējies lomu iepriekš, ja loma nav, lietotājs vēl nav izvēlējies un nedrīkst pārrakstīt.
+            // Ja Firebase jau ir pieslēgts lietotājs (saglabāta sesija) un lietotājs iepriekš ir pieņēmis lomu, automātiski iestata lomu kā reģistrēts.
+            // Sinhronizē tikai, ja lietotājs jau bija izvēlējies lomu iepriekš. Pirmajā palaišanā nedrīkst mainīt lomu.
             var auth = FirebaseAuth.DefaultInstance;
-            if (auth.CurrentUser != null
-                && LietotajaLoma.PasreizejaLoma != LietotajaLoma.Loma.Nav)
+            if (auth != null && auth.CurrentUser != null)
             {
-                if (!LietotajaLoma.IrRegistrets())
+                if (PlayerPrefs.HasKey("lietotaja_loma") && LietotajaLoma.PasreizejaLoma != LietotajaLoma.Loma.Nav)
                 {
-                    LietotajaLoma.IestatitKaRegistretu();
-                    Debug.Log("DatuParvaldnieks: Firebase sesija atrasta, loma mainīta uz Reģistrēts");
+                    if (!LietotajaLoma.IrRegistrets())
+                    {
+                        LietotajaLoma.IestatitKaRegistretu();
+                        Debug.Log("DatuParvaldnieks: Firebase sesija atrasta, loma mainīta uz Reģistrēts");
+                    }
+                }
+            }
+            else
+            {
+                // Firebase lietotājs nav pieslēdzies.
+                // Ja loma ir saglabāta kā Reģistrēts (piemēram, Android atjaunoja PlayerPrefs, bet neizdevās atjaunot Firebase sesiju),
+                // mums jāatiestata loma, lai varētu parādīt reģistrācijas/viesa izvēles ekrānu.
+                if (LietotajaLoma.IrRegistrets())
+                {
+                    Debug.LogWarning("DatuParvaldnieks: Loma ir Reģistrēts, bet Firebase lietotāja nav! Atiestata lomu uz Nav.");
+                    LietotajaLoma.AtiestatitLomu();
                 }
             }
         }
@@ -285,10 +298,7 @@ public class DatuParvaldnieks : MonoBehaviour
     }
 
     /// <summary>
-    /// (Utility) copy cloud progress/zivis back into local SQLite – used when a
-    /// registered user logs out and we briefly want the guest DB to reflect those
-    /// same values. The feature was removed from the regular logout flow, but the
-    /// method is available if you ever want to invoke it manually for testing.
+    /// Kopē mākoņa progresu un zivis uz lokālo SQLite.
     /// </summary>
     public async Task SinhronizetMakonaUzSQLite()
     {

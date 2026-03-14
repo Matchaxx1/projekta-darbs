@@ -103,6 +103,7 @@ public class DatuBaze : MonoBehaviour
     /// </summary>
     public void SaglabatProgresu(int soli, int monetas, int kopejasMonetas)
     {
+        if (db == null) AtvertDatuBazi();
         db.Update(new SpeletajsDB { Id = 1, Soli = soli, Monetas = monetas, KopejasMonetas = kopejasMonetas });
     }
 
@@ -112,6 +113,7 @@ public class DatuBaze : MonoBehaviour
 
     public SpeletajsDB IeladetProgresu()
     {
+        if (db == null) AtvertDatuBazi();
         return db.Find<SpeletajsDB>(1);
     }
 
@@ -121,6 +123,7 @@ public class DatuBaze : MonoBehaviour
     /// <param name="zivsId">Nopirktās zivs tipa identifikators</param>
     public void PievienotNopirktoZivi(int zivsId)
     {
+        if (db == null) AtvertDatuBazi();
         db.Insert(new NopirktaZivsDB
         {
             SpeletajaId = 1,
@@ -135,6 +138,7 @@ public class DatuBaze : MonoBehaviour
     /// <returns>Nopirkto zivju skaits</returns>
     public int IegutNopirktoSkaitu(int zivsId)
     {
+        if (db == null) AtvertDatuBazi();
         return db.Table<NopirktaZivsDB>()
             .Where(z => z.SpeletajaId == 1 && z.ZivsId == zivsId)
             .Count();
@@ -155,6 +159,7 @@ public class DatuBaze : MonoBehaviour
     /// </summary>
     public List<NopirktaZivsDB> IegutVisasZivis()
     {
+        if (db == null) AtvertDatuBazi();
         return db.Table<NopirktaZivsDB>()
             .Where(z => z.SpeletajaId == 1)
             .ToList();
@@ -165,6 +170,7 @@ public class DatuBaze : MonoBehaviour
     /// </summary>
     public void DzestVisasZivis()
     {
+        if (db == null) AtvertDatuBazi();
         db.Execute("DELETE FROM NopirktaZivsDB WHERE SpeletajaId = 1");
         Debug.Log("Visas zivis dzēstas no datubāzes");
     }
@@ -175,6 +181,7 @@ public class DatuBaze : MonoBehaviour
     /// </summary>
     public void DzestVienuZiviPecTipa(int zivsId)
     {
+        if (db == null) AtvertDatuBazi();
         var zivs = db.Table<NopirktaZivsDB>()
             .Where(z => z.SpeletajaId == 1 && z.ZivsId == zivsId)
             .FirstOrDefault();
@@ -190,6 +197,7 @@ public class DatuBaze : MonoBehaviour
     /// </summary>
     public void AtiestatitVisu()
     {
+        if (db == null) AtvertDatuBazi();
         // Dzēš visas nopirktās zivis no zivju tabulas
         db.Execute("DELETE FROM NopirktaZivsDB WHERE SpeletajaId = 1");
         
