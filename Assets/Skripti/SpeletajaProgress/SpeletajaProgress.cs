@@ -28,6 +28,7 @@ public class SpeletajaProgress : MonoBehaviour
     public int monetas = 0;           // Pašreizējais monētu atlikums
     public int kopejasMonetas = 0;    // Kopējās iepelnītās monētas (visu mūžu)
     private int monetasNoSoliem = 0;  // Cik monētu jau piešķirtas no soļiem (lai apreķinātu pieaugumu)
+    public bool datiIeladeti = false; // Vai dati no datubāzes ir ielādēti
 
     private Coroutine autoSaveCoroutine;
 
@@ -70,6 +71,8 @@ public class SpeletajaProgress : MonoBehaviour
         {
             Debug.LogError("DatuParvaldnieks.Instance ir null!");
         }
+
+        datiIeladeti = true;
 
         monetasNoSoliem = soli / soliPrieksMonetas;
         AtjaunotUI();

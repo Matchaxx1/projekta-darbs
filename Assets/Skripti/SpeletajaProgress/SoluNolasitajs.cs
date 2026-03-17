@@ -29,12 +29,37 @@ public class SoluNolasitajs : MonoBehaviour
     {
         if (Application.isEditor) { return; }
 
+        // Pagaida, kamēr no datubāzes tiek ielādēti dati, lai var tiem droši pieskaitīt
+        if (speletajaProgress != null && !speletajaProgress.datiIeladeti) {
+            return;
+        }
+
         if (soluNobide == 0)
         {
-            // Aprēķina bāzi kā sensora pašreizējā vērtība mīnus saglabātie soļi;
             long currentSensor = StepCounter.current.stepCounter.ReadValue();
+            
+            // Aprēķina soļus, kas veikti, kamēr spēle bija aizvērta
+            long savedSensor = System.Convert.ToInt64(PlayerPrefs.GetString("LastSensorValue", "0"));
+            long offlineSteps = 0;
+            
+            if (savedSensor > 0 && currentSensor > savedSensor)
+            {
+                offlineSteps = currentSensor - savedSensor;
+            }
+            
             ieprieksejieSoli = speletajaProgress != null ? speletajaProgress.soli : 0;
+            
+            // Pievieno oflainā noietos soļus esošajiem
+            if (offlineSteps > 0 && speletajaProgress != null)
+            {
+                speletajaProgress.AtjauninatSolusNoSkaitītaja(speletajaProgress.soli + (int)offlineSteps);
+                ieprieksejieSoli = speletajaProgress.soli;
+            }
+
+            // Aprēķina bāzi kā sensora pašreizējā vērtība mīnus saglabātie soļi;
             soluNobide = currentSensor - ieprieksejieSoli;
+            
+            SaglabatSensoraStavokli();
         }
 
         int pashreizejieSoli = (int)(StepCounter.current.stepCounter.ReadValue() - soluNobide);
@@ -54,6 +79,8 @@ public class SoluNolasitajs : MonoBehaviour
                 soluNobide = currentSensor - kopaSoli;
                 
                 pashreizejieSoli = kopaSoli; // Novērš bezgalīgo soļu skaitīšanas kļūdu
+                
+                SaglabatSensoraStavokli(); // Saglabā jauno sensoru vērtību fonam
             }
 
             counterTMP.text = "Soli: " + pashreizejieSoli.ToString();
@@ -63,6 +90,23 @@ public class SoluNolasitajs : MonoBehaviour
 
     void OnApplicationPause(bool pauseStatus)
     {
+        if (pauseStatus)
+        {
+            SaglabatSensoraStavokli();
+        }
+    }
+
+    void OnApplicationQuit()
+    {
+        SaglabatSensoraStavokli();
+    }
+
+    void SaglabatSensoraStavokli()
+    {
+        if (Application.isEditor || StepCounter.current == null) { return; }
+        long currentSensor = StepCounter.current.stepCounter.ReadValue();
+        PlayerPrefs.SetString("LastSensorValue", currentSensor.ToString());
+        PlayerPrefs.Save();
     }
 
     async void RequestPermission()

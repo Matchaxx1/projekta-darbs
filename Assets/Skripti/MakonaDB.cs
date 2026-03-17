@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Firebase.Auth;
 using Firebase.Firestore;
 using System.Collections.Generic;
@@ -98,6 +98,12 @@ public class MakonaDB : MonoBehaviour
         
         // Saglabā tos pašus datus arī lokāli kā rezerves kopiju
         SaglabatProgresuSQLite(soli, monetas, kopejasMonetas);
+
+        // Pievieno arī lietotāja vārdu, ja tāds ir
+        if (auth != null && auth.CurrentUser != null && !string.IsNullOrEmpty(auth.CurrentUser.DisplayName))
+        {
+            dati["lietotajvards"] = auth.CurrentUser.DisplayName;
+        }
     }
 
     /// <summary>
@@ -380,8 +386,6 @@ public class MakonaDB : MonoBehaviour
     /// <summary>
     /// Mēģina iegūt zivsId vērtību no Firestore dokumenta.
     /// </summary>
-    /// <param name="zivsDoc">Firestore dokumenta momentuzņēmums</param>
-    /// <param name="zivsId">Iegūtais zivs ID (out parametrs)</param>
     private bool MeginatIegutZivsId(DocumentSnapshot zivsDoc, out int zivsId)
     {
         zivsId = 0;
@@ -439,4 +443,62 @@ public class MakonaDB : MonoBehaviour
     {
         public List<NopirktaZivsDB> zivis;
     }
+
+    public async Task<(List<LideruDati> lideri, DateTime nakamaAtjauninasana)> IegutLiderus()
+    {
+        var saraksts = new List<LideruDati>();
+        DateTime atjaunotLaiks = DateTime.UtcNow.AddDays(1);
+
+        var doc = db.Collection("Lidertabula").Document("Galvenais");
+        var snapshot = await doc.GetSnapshotAsync();
+
+        bool atjaunot = true;
+        if (snapshot.Exists && snapshot.ContainsField("PedejaAtjauninasana"))
+        {
+            Timestamp pedeja = snapshot.GetValue<Timestamp>("PedejaAtjauninasana");
+            DateTime pedejaDatums = pedeja.ToDateTime();
+            
+            if ((Timestamp.GetCurrentTimestamp().ToDateTime() - pedejaDatums).TotalHours < 24)
+            {
+                atjaunot = false;
+                atjaunotLaiks = pedejaDatums.AddDays(1);
+            }
+        }
+
+        if (atjaunot)
+        {
+            var lietotajiSnap = await db.Collection("lietotaji").OrderByDescending("soli").Limit(10).GetSnapshotAsync();
+            var d = new List<string>();
+            var i = new List<int>();
+            foreach (var docSnap in lietotajiSnap.Documents)
+            {
+                string name = docSnap.ContainsField("lietotajvards") ? docSnap.GetValue<string>("lietotajvards") : "Nezināms";
+                int soli = docSnap.ContainsField("soli") ? docSnap.GetValue<int>("soli") : 0;
+                saraksts.Add(new LideruDati { Lietotajvards = name, Soli = soli });
+                d.Add(name);
+                i.Add(soli);
+            }
+
+            // Izmantos konkrētu laiku, lai lokāli uzreiz zinātu kad atjaunosies
+            Timestamp jaunaisLaiks = Timestamp.GetCurrentTimestamp();
+            atjaunotLaiks = jaunaisLaiks.ToDateTime().AddDays(1);
+
+            await doc.SetAsync(new Dictionary<string, object> {
+                { "PedejaAtjauninasana", jaunaisLaiks }, 
+                { "Vardi", d }, 
+                { "Soli", i } 
+            });
+        }
+        else
+        {
+            List<string> d = snapshot.GetValue<List<string>>("Vardi");        
+            List<int> i = snapshot.GetValue<List<int>>("Soli");
+            for (int k = 0; k < d.Count; k++)
+            {
+                saraksts.Add(new LideruDati { Lietotajvards = d[k], Soli = i[k] });
+            }
+        }
+        return (saraksts, atjaunotLaiks);
+    }
 }
+
