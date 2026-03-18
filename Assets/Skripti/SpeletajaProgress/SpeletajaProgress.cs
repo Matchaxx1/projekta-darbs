@@ -7,21 +7,19 @@ public class SpeletajaProgress : MonoBehaviour
 {
     public int soliPrieksMonetas = 50; // Cik soļu nepieciešams vienas monētas iegūšanai
 
-    [SerializeField] private float autoSaveIntervalsSekundes = 30f; // Auto-saglabāšanas intervāls sekundēs
-
     // UI elementi soļu un monētu attēlošanai
-    private Text soluSkaits;                       // Legacy UI teksts soļiem (neizmantots)
     public TextMeshProUGUI soluSkaitsTMP;           // TMP teksts soļu skaitam
-    private Text monetuSkaits;                      // Legacy UI teksts monētām (neizmantots)
-    public TextMeshProUGUI monetuSkaitsTMP;         // TMP teksts monētu skaitam (primārais)
-    private Text monetuSkaits2;                     // Legacy UI teksts monētām (neizmantots)
-    public TextMeshProUGUI monetuSkaitsTMP2;        // TMP teksts monētu skaitam (sekundārais)
+    public TextMeshProUGUI monetuSkaitsTMP;         // TMP teksts monētu skaitam
+    public TextMeshProUGUI monetuSkaitsTMP2;        // TMP teksts monētu skaitam
     public Button pievienotSolusPoga;               // Debug poga, pievieno 100 soļus
     public Button pievienotVairakSolusPoga;         // Debug poga, pievieno 1000 soļus
 
     public Image progressJosla;                     // Progresa josla laukā līdz nākošajai monētai
     public TMP_Text cikNoSoliemTMP;                 // Teksts “XX/50” soļu līdz nākošajai monētai
 
+    public SanemtMonetasAnimacija monetasAnimacija; // Atsauce uz animācijas skriptu
+    public Transform monetasParadisanasVieta;       // Sākuma pozīcija animācijai
+    public AudioSource monetasIegusanasSkana;       // Skaņa, kas atskan, kad iekrājas monēta
 
     // Spēlētāja dati
     public int soli = 0;              // Pašreizējais soļu skaits
@@ -30,10 +28,8 @@ public class SpeletajaProgress : MonoBehaviour
     private int monetasNoSoliem = 0;  // Cik monētu jau piešķirtas no soļiem (lai apreķinātu pieaugumu)
     public bool datiIeladeti = false; // Vai dati no datubāzes ir ielādēti
 
-    private Coroutine autoSaveCoroutine;
-
     /// <summary>
-    /// Ielādē spēlētāja progresu no datubāzes, inicializē monētu skaitītāju un sāk periodisko auto-saglabāšanu.
+    /// Ielādē spēlētāja progresu no datubāzes, inicializē monētu skaitītāju.
     /// </summary>
     async void Start()
     {
@@ -76,11 +72,6 @@ public class SpeletajaProgress : MonoBehaviour
 
         monetasNoSoliem = soli / soliPrieksMonetas;
         AtjaunotUI();
-
-        // Sāk periodisko auto-save
-        if (autoSaveCoroutine != null)
-            StopCoroutine(autoSaveCoroutine);
-        autoSaveCoroutine = StartCoroutine(AutoSaveIntervala());
     }
 
     void OnEnable()
@@ -100,6 +91,12 @@ public class SpeletajaProgress : MonoBehaviour
 
     void OnDestroy()
     {
+        // Saglabā datus, pirms objekts tiek iznīcināts (piemēram, mainot ainu)
+        if (datiIeladeti && DatuParvaldnieks.Instance != null)
+        {
+            SaglabatProgresu();
+        }
+
         // Notīra pogu apstrādātājus
         if (pievienotSolusPoga != null)
         {
@@ -109,12 +106,6 @@ public class SpeletajaProgress : MonoBehaviour
         if (pievienotVairakSolusPoga != null)
         {
             pievienotVairakSolusPoga.onClick.RemoveListener(PievienotTukstotsSolus);
-        }
-
-        // Aptur auto-save coroutine
-        if (autoSaveCoroutine != null)
-        {
-            StopCoroutine(autoSaveCoroutine);
         }
     }
 
@@ -196,6 +187,19 @@ public class SpeletajaProgress : MonoBehaviour
             kopejasMonetas += pieaugums;
             monetasNoSoliem = jaunasMonetasNoSoliem;
             Debug.Log("Iegūtas " + pieaugums + " monētas no soļiem!");
+
+            // Palaiž monētu animāciju interfeisā
+            if (monetasAnimacija != null && monetasParadisanasVieta != null)
+            {
+                monetasAnimacija.SaktAnimaciju(pieaugums, monetasParadisanasVieta);
+            }
+
+            // Atskaņo monētas iegūšanas skaņu
+            if (monetasIegusanasSkana != null)
+            {
+                monetasIegusanasSkana.Play();
+            }
+
             return true;
         }
         return false;
@@ -211,23 +215,6 @@ public class SpeletajaProgress : MonoBehaviour
         else
         {
             Debug.LogError("DatuParvaldnieks.Instance ir null! Nevar saglabāt progresu.");
-        }
-    }
-
-    /// <summary>
-    /// Periodisks auto-save, saglabā datus ik pēc noteikta sekunžu intervāla.
-    /// </summary>
-    private IEnumerator AutoSaveIntervala()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(autoSaveIntervalsSekundes);
-
-            if (DatuParvaldnieks.Instance != null)
-            {
-                SaglabatProgresu();
-                Debug.Log("[Auto-Save] Progress saglabāts automātiski: " + soli + " soļi, " + monetas + " monētas");
-            }
         }
     }
 

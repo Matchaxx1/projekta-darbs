@@ -124,7 +124,7 @@ public class StatistikaEkrans : MonoBehaviour
             avots = "Firestore";
 
         // Ieraksta visu statistiku žurnālā vienā rindā
-        Debug.Log("[Statistika | " + iemesls + "] " + avots +
+        Debug.Log("Statistika | " + iemesls + "" + avots +
                   " | Soļi: " + speletajaProgress.soli +
                   " | Monētas: " + speletajaProgress.monetas +
                   " | Zivis: " + zivjuSkaits + "/" + maxZivju);

@@ -15,6 +15,7 @@ public class UIParvaldnieks : MonoBehaviour
     public GameObject registracijasPoga;     // Reģistrācijas poga (redzama tikai viesiem)
     public ProfilaInformacija profilaInfo;   // Profila informācijas komponents
     public GameObject pieslegtiesUI;         // Pieslēgšanās UI panelis
+    public GameObject lideruTabula;          // Līderu tabulas UI panelis
 
     /// <summary>
     /// Ja lietotājam nav izvēlēta loma, parāda izvēles ekrānu.
@@ -22,7 +23,10 @@ public class UIParvaldnieks : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        // Parāda izvēles UI tikai tad, ja lietotājam vēl nav izvēlēta loma
+        // Piespiedu kārtā vienmēr paslēpj līderu tabulu pie starta, lai tā nebloķētu klikšķus
+        AizvertLideruTabulu();
+
+        // Parāda izvēles UI tikai tad, ja lietotājam vēl nav izvēlēta loma 
         if (izveleUI != null)
         {
             if (LietotajaLoma.PasreizejaLoma == LietotajaLoma.Loma.Nav)
@@ -220,5 +224,28 @@ public class UIParvaldnieks : MonoBehaviour
     {
         CanvasParvalditajs.atvertRegistraciju = true;
         SceneManager.LoadScene("RegistracijasEkrans");
+    }
+
+    /// <summary>
+    /// "Līderu tabula" pogas apstrādātājs, pāriet uz līderu tabulas ekrānu.
+    /// </summary>
+    public void DotiesUzLideruTabulu()
+    {
+        if (lideruTabula != null)
+        {
+            lideruTabula.GetComponent<CanvasGroup>().alpha = 1f;
+            lideruTabula.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            lideruTabula.GetComponent<CanvasGroup>().interactable = true;
+        }
+    }
+
+    public void AizvertLideruTabulu()
+    {
+        if (lideruTabula != null)
+        {
+            lideruTabula.GetComponent<CanvasGroup>().alpha = 0f;
+            lideruTabula.GetComponent<CanvasGroup>().blocksRaycasts = false;
+            lideruTabula.GetComponent<CanvasGroup>().interactable = false;
+        }
     }
 }

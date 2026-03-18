@@ -17,6 +17,8 @@ public class DatuParvaldnieks : MonoBehaviour
     /// </summary>
     void Awake()
     {
+        Application.targetFrameRate = 60;
+
         if (Instance == null)
         {
             Instance = this;
@@ -43,7 +45,7 @@ public class DatuParvaldnieks : MonoBehaviour
             {
                 // Firebase lietotājs nav pieslēdzies.
                 // Ja loma ir saglabāta kā Reģistrēts (piemēram, Android atjaunoja PlayerPrefs, bet neizdevās atjaunot Firebase sesiju),
-                // mums jāatiestata loma, lai varētu parādīt reģistrācijas/viesa izvēles ekrānu.
+                // jāatiestata loma, lai varētu parādīt reģistrācijas/viesa izvēles ekrānu.
                 if (LietotajaLoma.IrRegistrets())
                 {
                     Debug.LogWarning("DatuParvaldnieks: Loma ir Reģistrēts, bet Firebase lietotāja nav! Atiestata lomu uz Nav.");
@@ -57,11 +59,6 @@ public class DatuParvaldnieks : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        Application.logMessageReceived -= HandleLog;
-    }
-
     /// <summary>
     /// Pārbauda, vai jāizmanto mākoņa datubāze (Firestore).
     /// Atgriež true, ja lietotājs ir reģistrēts un MakonaDB instance ir pieejama.
@@ -69,16 +66,6 @@ public class DatuParvaldnieks : MonoBehaviour
     private bool IzmantotMakoni()
     {
         return LietotajaLoma.IrRegistrets() && MakonaDB.Instance != null;
-    }
-
-    // filtrē null‑ref izsaukumus, kas rodas AndroidPlayer logā
-    private void HandleLog(string logString, string stackTrace, LogType type)
-    {
-        if (type == LogType.Exception && logString.Contains("NullReferenceException")
-            && logString.Contains("AndroidPlayer"))
-        {
-            Debug.Log( logString + "\n" + stackTrace);
-        }
     }
 
     /// <summary>
@@ -295,6 +282,12 @@ public class DatuParvaldnieks : MonoBehaviour
 
         // Augšuplādē nolasītos datus uz Firestore mākoņa datubāzi
         await MakonaDB.Instance.ParnestViesaDatus(soli, monetas, kopejasMonetas, zivis);
+
+        // Notīra lokālos datus, lai nepieļautu to kopēšanos uz nākamo izveidoto kontu, ko izveidos uzreiz pēc izrakstīšanās
+        if (DatuBaze.Instance != null)
+        {
+            DatuBaze.Instance.AtiestatitVisu();
+        }
     }
 
     /// <summary>

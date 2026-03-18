@@ -88,6 +88,9 @@ public class SoluNolasitajs : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Tiek izsaukts, kad lietotne tiek apturēta (piemēram, ielikta fonā).
+    /// </summary>
     void OnApplicationPause(bool pauseStatus)
     {
         if (pauseStatus)
@@ -96,25 +99,39 @@ public class SoluNolasitajs : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Tiek izsaukts, kad lietotne tiek izslēgta.
+    /// </summary>
     void OnApplicationQuit()
     {
         SaglabatSensoraStavokli();
     }
 
+    /// <summary>
+    /// Saglabā pašreizējo pedometra sensora vērtību lokālajā atmiņā (PlayerPrefs).
+    /// To izmanto, lai vēlāk aprēķinātu soļus laikā, kad spēle bija aizvērta.
+    /// </summary>
     void SaglabatSensoraStavokli()
     {
         if (Application.isEditor || StepCounter.current == null) { return; }
+        
+        // Nolasa sensora pamata vērtību, kas var būt liels skaitlis no ierīces ieslēgšanas brīža
         long currentSensor = StepCounter.current.stepCounter.ReadValue();
         PlayerPrefs.SetString("LastSensorValue", currentSensor.ToString());
         PlayerPrefs.Save();
     }
 
+    /// <summary>
+    /// Asinhroni pieprasa fizkālas aktivitātes nolasīšanas atļauju Android ierīcēs.
+    /// Ja atļauja netiek dota, aizver spēli, jo tā ir būtiska spēles mehānikai.
+    /// </summary>
     async void RequestPermission()
     {
         #if UNITY_EDITOR
             debugTeksts.text = "Atvērts datorā";
         #endif
         #if UNITY_ANDROID
+            // Izmanto AndroidRuntimePermissions rīku atļaujas pieprasīšanai
             AndroidRuntimePermissions.Permission result = await AndroidRuntimePermissions.RequestPermissionAsync("android.permission.ACTIVITY_RECOGNITION");
             if (result == AndroidRuntimePermissions.Permission.Granted)
             {

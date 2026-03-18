@@ -165,6 +165,20 @@ public class ProfilaInformacija : MonoBehaviour
             Debug.Log("Lokālā SQLite datubāze iztīrīta pēc izrakstīšanās");
         }
         
+        // Notīra arī mākoņa datubāzes piesaistīto lokālo kešatmiņu (PlayerPrefs), lai neļautu datiem pārnesties
+        if (MakonaDB.Instance != null)
+        {
+            MakonaDB.Instance.NotiritLokalosDatus();
+        }
+
+        // Atiestatām atmiņā esošo progresu, lai nākamajā ciklā vecais nenosūtītos
+        if (progress != null)
+        {
+            progress.soli = 0;
+            progress.monetas = 0;
+            progress.kopejasMonetas = 0;
+        }
+        
         // Novirza uz galveno ekrānu, kur lietotājs varēs izvēlēties lomu no jauna
         UnityEngine.SceneManagement.SceneManager.LoadScene("GalvenaisEkrans");
     }

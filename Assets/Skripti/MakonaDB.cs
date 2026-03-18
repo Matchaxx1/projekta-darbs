@@ -93,17 +93,17 @@ public class MakonaDB : MonoBehaviour
             { "kopejasMonetas", kopejasMonetas }
         };
 
-        // Saglabā datus Firestore, izmantojot MergeAll, lai nepārrakstītu citus laukus
-        await doc.SetAsync(dati, SetOptions.MergeAll);
-        
-        // Saglabā tos pašus datus arī lokāli kā rezerves kopiju
-        SaglabatProgresuSQLite(soli, monetas, kopejasMonetas);
-
-        // Pievieno arī lietotāja vārdu, ja tāds ir
+        // Pievieno arī lietotāja vārdu, ja tāds ir, PIRMS saglabāšanas datubāzē
         if (auth != null && auth.CurrentUser != null && !string.IsNullOrEmpty(auth.CurrentUser.DisplayName))
         {
             dati["lietotajvards"] = auth.CurrentUser.DisplayName;
         }
+
+        // Saglabā datus Firestore, izmantojot MergeAll, lai nepārrakstītu citus laukus
+        await doc.SetAsync(dati, SetOptions.MergeAll);
+
+        // Saglabā tos pašus datus arī lokāli kā rezerves kopiju
+        SaglabatProgresuSQLite(soli, monetas, kopejasMonetas);
     }
 
     /// <summary>
@@ -306,7 +306,19 @@ public class MakonaDB : MonoBehaviour
         PlayerPrefs.DeleteKey(FISH_KEY);
         Debug.Log("Viss progress atiestatīts Firestore un lokālā datubāzē!");
     }
-    
+
+    /// <summary>
+    /// Notīra tikai lokālo kešatmiņu (PlayerPrefs), neaiztiekot Firestore datus.
+    /// To izmanto, izrakstoties no konta, lai nākamais lietotājs nemantotu iepriekšējā lietotāja datus.
+    /// </summary>
+    public void NotiritLokalosDatus()
+    {
+        PlayerPrefs.DeleteKey(PROGRESS_KEY);
+        PlayerPrefs.DeleteKey(FISH_KEY);
+        PlayerPrefs.Save();
+        Debug.Log("MakonaDB: Lokālā kešatmiņa iztīrīta!");
+    }
+
     /// <summary>
     /// Ielādē progresu no Firestore un saglabā to lokāli PlayerPrefs.
     /// </summary>
@@ -400,25 +412,7 @@ public class MakonaDB : MonoBehaviour
         }
         catch
         {
-        }
-
-        try
-        {
-            long zivsIdLong = zivsDoc.GetValue<long>("zivsId");
-            zivsId = (int)zivsIdLong;
-            return true;
-        }
-        catch
-        {
-        }
-
-        try
-        {
-            string zivsIdTeksts = zivsDoc.GetValue<string>("zivsId");
-            return int.TryParse(zivsIdTeksts, out zivsId);
-        }
-        catch
-        {
+            
         }
 
         return false;
@@ -444,6 +438,11 @@ public class MakonaDB : MonoBehaviour
         public List<NopirktaZivsDB> zivis;
     }
 
+    /// <summary>
+    /// Iegūst līderu tabulas datus no Firestore. 
+    /// Ja pagājušas mazāk nekā 24 stundas kopš pēdējās atjaunināšanas, atgriež iepriekš saglabātos datus.
+    /// Pretējā gadījumā atjaunina līderu tabulu ar aktuālajiem datiem no lietotāju kolekcijas.
+    /// </summary>
     public async Task<(List<LideruDati> lideri, DateTime nakamaAtjauninasana)> IegutLiderus()
     {
         var saraksts = new List<LideruDati>();
@@ -453,11 +452,13 @@ public class MakonaDB : MonoBehaviour
         var snapshot = await doc.GetSnapshotAsync();
 
         bool atjaunot = true;
+        // Pārbauda, vai dokuments eksistē un satur pēdējās atjaunināšanas laiku
         if (snapshot.Exists && snapshot.ContainsField("PedejaAtjauninasana"))
         {
             Timestamp pedeja = snapshot.GetValue<Timestamp>("PedejaAtjauninasana");
             DateTime pedejaDatums = pedeja.ToDateTime();
             
+            // Ja nav pagājušas 24 stundas, dati nav jāatjaunina
             if ((Timestamp.GetCurrentTimestamp().ToDateTime() - pedejaDatums).TotalHours < 24)
             {
                 atjaunot = false;
@@ -467,6 +468,7 @@ public class MakonaDB : MonoBehaviour
 
         if (atjaunot)
         {
+            // Iegūst 10 lietotājus ar visvairāk soļiem, kārtojot pēc soļu skaita dilstošā secībā
             var lietotajiSnap = await db.Collection("lietotaji").OrderByDescending("soli").Limit(10).GetSnapshotAsync();
             var d = new List<string>();
             var i = new List<int>();
@@ -483,6 +485,7 @@ public class MakonaDB : MonoBehaviour
             Timestamp jaunaisLaiks = Timestamp.GetCurrentTimestamp();
             atjaunotLaiks = jaunaisLaiks.ToDateTime().AddDays(1);
 
+            // Saglabā jaunos līderu datus apkopotajā dokumentā, lai citiem nevajadzētu lasīt visus lietotājus
             await doc.SetAsync(new Dictionary<string, object> {
                 { "PedejaAtjauninasana", jaunaisLaiks }, 
                 { "Vardi", d }, 
@@ -491,6 +494,7 @@ public class MakonaDB : MonoBehaviour
         }
         else
         {
+            // Nolasa jau saglabātos līderu datus no apkopotā dokumenta
             List<string> d = snapshot.GetValue<List<string>>("Vardi");        
             List<int> i = snapshot.GetValue<List<int>>("Soli");
             for (int k = 0; k < d.Count; k++)
