@@ -95,5 +95,13 @@ public class CanvasParvalditajs : MonoBehaviour
         if (aizmirstaParoleCanvas == null) return;
         aizmirstaParoleCanvas.SetActive(false);
     }
+
+    /// <summary>
+    /// Poga "Atpakaļ", kas aizved lietotāju atpakaļ uz galveno ekrānu (spēli).
+    /// </summary>
+    public void PogaAtpakalUzSpeli()
+    {
+        SceneManager.LoadScene("GalvenaisEkrans");
+    }
 }
 

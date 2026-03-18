@@ -443,7 +443,7 @@ public class MakonaDB : MonoBehaviour
     /// Ja pagājušas mazāk nekā 24 stundas kopš pēdējās atjaunināšanas, atgriež iepriekš saglabātos datus.
     /// Pretējā gadījumā atjaunina līderu tabulu ar aktuālajiem datiem no lietotāju kolekcijas.
     /// </summary>
-    public async Task<(List<LideruDati> lideri, DateTime nakamaAtjauninasana)> IegutLiderus()
+    public async Task<(List<LideruDati> lideri, DateTime nakamaAtjauninasana)> IegutLiderus(bool piespieduAtjaunosana = false)
     {
         var saraksts = new List<LideruDati>();
         DateTime atjaunotLaiks = DateTime.UtcNow.AddDays(1);
@@ -453,13 +453,13 @@ public class MakonaDB : MonoBehaviour
 
         bool atjaunot = true;
         // Pārbauda, vai dokuments eksistē un satur pēdējās atjaunināšanas laiku
-        if (snapshot.Exists && snapshot.ContainsField("PedejaAtjauninasana"))
+        if (!piespieduAtjaunosana && snapshot.Exists && snapshot.ContainsField("PedejaAtjauninasana"))
         {
             Timestamp pedeja = snapshot.GetValue<Timestamp>("PedejaAtjauninasana");
-            DateTime pedejaDatums = pedeja.ToDateTime();
-            
-            // Ja nav pagājušas 24 stundas, dati nav jāatjaunina
-            if ((Timestamp.GetCurrentTimestamp().ToDateTime() - pedejaDatums).TotalHours < 24)
+            DateTime pedejaDatums = pedeja.ToDateTime().ToUniversalTime();
+
+            // Ja nav pagājušas 24 stundas, dati nav jāatjaunina (nodrošu nelielu sekunžu rezervi, lai timer nesaietu ciklā)
+            if ((DateTime.UtcNow - pedejaDatums).TotalSeconds < 86395)
             {
                 atjaunot = false;
                 atjaunotLaiks = pedejaDatums.AddDays(1);
@@ -483,7 +483,7 @@ public class MakonaDB : MonoBehaviour
 
             // Izmantos konkrētu laiku, lai lokāli uzreiz zinātu kad atjaunosies
             Timestamp jaunaisLaiks = Timestamp.GetCurrentTimestamp();
-            atjaunotLaiks = jaunaisLaiks.ToDateTime().AddDays(1);
+            atjaunotLaiks = jaunaisLaiks.ToDateTime().ToUniversalTime().AddDays(1);
 
             // Saglabā jaunos līderu datus apkopotajā dokumentā, lai citiem nevajadzētu lasīt visus lietotājus
             await doc.SetAsync(new Dictionary<string, object> {

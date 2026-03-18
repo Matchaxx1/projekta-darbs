@@ -88,11 +88,41 @@ public class LideruParvaldnieks : MonoBehaviour
                 lideruVieta[i].gameObject.SetActive(true);
                 lideruVieta[i].IestatitLietotajaDatus(lideri[i]);
             }
-            // Ja datu vairs nav (piemēram, ir tikai daži līderi, bet vairākas UI vietas), paslēpj tukšo vietu
             else
             {
                 lideruVieta[i].gameObject.SetActive(false);
             }
         }
+    }
+
+    /// <summary>
+    /// Debug poga, kas piespiež tabulu atjaunot datus mākonī, ignorējot 24 stundu noildzes taimeri.
+    /// </summary>
+    public async void PiespieduAtjaunotLideruTabulu()
+    {
+        if (MakonaDB.Instance == null) return;
+        
+        Debug.Log("Piespiedu kārtā atjauno līderu tabulu. Tas var aizņemt brīdi...");
+        if (atskaitesTeksts != null) atskaitesTeksts.text = "Piespiedu atjaunošana...";
+
+        var rezultati = await MakonaDB.Instance.IegutLiderus(true);
+
+        var lideri = rezultati.lideri;
+        nakamaAtjauninasana = rezultati.nakamaAtjauninasana;
+        vaiLaiksIeladets = true;
+
+        for (int i = 0; i < lideruVieta.Count; i++)
+        {
+            if (i < lideri.Count)
+            {
+                lideruVieta[i].gameObject.SetActive(true);
+                lideruVieta[i].IestatitLietotajaDatus(lideri[i]);
+            }
+            else
+            {
+                lideruVieta[i].gameObject.SetActive(false);
+            }
+        }
+        Debug.Log("Līderu tabula atjaunota piespiedu kārtā!");
     }
 }

@@ -283,53 +283,57 @@ public class PieslegsanasParvaldnieks : MonoBehaviour
         }
 
         // Izsauc paroles atiestatīšanas metodi
-        aizmirstaParole(epasts);
+        StartCoroutine(AizmirstaParoleKorutina(epasts));
     }
 
     /// <summary>
     /// Nosūta paroles atiestatīšanas e-pastu caur Firebase Auth.
     /// Apstrādā kļūdas un attēlo rezultātu ar EasyPopup popupiem.
     /// </summary>
-    private void aizmirstaParole(string epasts)
+    private IEnumerator AizmirstaParoleKorutina(string epasts)
     {
         // Sūta paroles atiestatīšanas pieprasījumu Firebase servisam
-        auth.SendPasswordResetEmailAsync(epasts).ContinueWithOnMainThread(task =>
-        {
-            if (task.IsFaulted || task.IsCanceled)
-            {
-                // Nosūtīšana neizdevās, nosaka kļūdas veidu
-                string kluda = "Kļūda nosūtīšanā!";
+        Task AtjaunosanasTask = auth.SendPasswordResetEmailAsync(epasts);
+        
+        yield return new WaitUntil(predicate: () => AtjaunosanasTask.IsCompleted);
 
-                if (task.Exception != null)
+        if (AtjaunosanasTask.IsFaulted || AtjaunosanasTask.IsCanceled)
+        {
+            // Nosūtīšana neizdevās, nosaka kļūdas veidu
+            string kluda = "Kļūda nosūtīšanā!";
+
+            if (AtjaunosanasTask.Exception != null)
+            {
+                FirebaseException firebaseEx = AtjaunosanasTask.Exception.GetBaseException() as FirebaseException;
+                if (firebaseEx != null)
                 {
-                    FirebaseException firebaseEx = task.Exception.GetBaseException() as FirebaseException;
-                    if (firebaseEx != null)
+                    AuthError kods = (AuthError)firebaseEx.ErrorCode;
+                    switch (kods)
                     {
-                        AuthError kods = (AuthError)firebaseEx.ErrorCode;
-                        switch (kods)
-                        {
-                            case AuthError.InvalidEmail:
-                                kluda = "Nepareiza e-pasta adrese!";
-                                break;
-                            case AuthError.UserNotFound:
-                                kluda = "Konts ar šādu e-pastu neeksistē!";
-                                break;
-                            case AuthError.MissingEmail:
-                                kluda = "Lūdzu ievadiet e-pasta adresi!";
-                                break;
-                        }
+                        case AuthError.InvalidEmail:
+                            kluda = "Nepareiza e-pasta adrese!";
+                            break;
+                        case AuthError.UserNotFound:
+                            kluda = "Konts ar šādu e-pastu neeksistē!";
+                            break;
+                        case AuthError.MissingEmail:
+                            kluda = "Lūdzu ievadiet e-pasta adresi!";
+                            break;
                     }
                 }
-
-                // Attēlo kļūdu ar EasyPopup
-                EasyPopup.Create("Kļūda", kluda, "PopupError");
-                Debug.LogWarning("SendPasswordResetEmailAsync kļūda: " + task.Exception);
-                return;
             }
 
-            // Veiksmīgi nosūtīts, attēlo apstiprinājuma paziņojumu
-            EasyPopup.Create("Sanāca!", "Paroles atiestatīšanas saite nosūtīta uz " + epasts + "!", "PopupSuccess");
-            Debug.Log("Paroles atiestatīšanas e-pasts nosūtīts uz: " + epasts);
-        });
+            // Attēlo kļūdu ar EasyPopup
+            EasyPopup.Create("Kļūda", kluda, "PopupError");
+            Debug.LogWarning("SendPasswordResetEmailAsync kļūda: " + AtjaunosanasTask.Exception);
+        }
+        else
+        {
+            // Pievienots LOG, lai redzētu vai kods vispār izpildās veiksmīgi
+            Debug.Log("Poga nospiesta un atiestatīšanas API izpildīts! E-pasts: " + epasts);
+            
+            // Izmantojam "PopupError" stilu kā testu, jo "PopupSuccess" varbūt neeksistē jūsu EasyPopup iestatījumos
+            EasyPopup.Create("Pārbaudiet e-pastu!", "Paroles atiestatīšanas saite nosūtīta uz " + epasts + "!", "PopupError");
+        }
     }
 }

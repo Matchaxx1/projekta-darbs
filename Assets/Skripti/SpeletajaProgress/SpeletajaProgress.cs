@@ -208,6 +208,12 @@ public class SpeletajaProgress : MonoBehaviour
     /// SSaglabā pašreizējos soļus un monētas (SQLite vai Firestore, atkarībā no lomas)
     async void SaglabatProgresu()
     {
+        if (!datiIeladeti) 
+        {
+            Debug.LogWarning("Dati vēl nav ielādēti, atcelts mēģinājums saglabāt 0 vērtības.");
+            return;
+        }
+
         if (DatuParvaldnieks.Instance != null)
         {
             await DatuParvaldnieks.Instance.SaglabatProgresu(soli, monetas, kopejasMonetas);
